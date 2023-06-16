@@ -1,0 +1,38 @@
+pipeline:
+  fastq_ext: ".fastq.gz"
+  sample_type: "paired"
+  threads: 6
+  work_dir: "/home/sameesh/Portfolio/test_data"
+  pipeline_input: "/home/sameesh/Portfolio/test_data/"
+  log_dir: "/logs"
+  benchmarks_dir: "/benchmarks"
+  results: "/results"
+
+bclconvert:
+  input_dir: "/home/sameesh/Portfolio/test_data/bcllib"
+  output_dir: "/home/sameesh/Portfolio/test_data/raw_data"
+
+fastqc:
+  output_dir: "/qc"
+  extract: True
+  env: "env_fastqc"
+
+trimgalore:
+  output_dir: "/trimmed"
+  env: "env_trimgalore"
+
+star:
+  input_dir: "/trimmed"
+  output_dir: "/aligned"
+  env: "env_star"
+
+picard:
+  input_dir: "/aligned"
+  output_dir: "/markdup"
+
+samtools:
+  input_dir: "/aligned"
+  output_dir: "/indexed"
+
+feature_counts:
+  output_dir: "/counts"

@@ -1,0 +1,35 @@
+from utils.utils_pipeline import PipelineUtils
+
+
+# get the config file loc
+snakefile_loc: Path = Path(workflow.snakefile).parent
+config_loc: Path = Path(snakefile_loc / "../config/config.yaml").resolve()
+
+
+configfile: config_loc
+
+
+work_dir = config["pipeline"]["work_dir"]
+
+# =================================================================================================
+fastqc_config = PipelineUtils.generate_step_config(config["pipeline"], config["fastqc"])
+
+
+module fastqc:
+    snakefile:
+        "rules/fastqc.smk"
+    config:
+        fastqc_config
+
+
+# =================================================================================================
+
+
+use rule * from fastqc as fastqc_*
+
+
+# =================================================================================================
+rule rna_seq_all:
+    input:
+        rules.fastqc_all.input,
+    default_target: True
