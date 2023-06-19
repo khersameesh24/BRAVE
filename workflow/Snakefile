@@ -1,0 +1,84 @@
+from utils.utils_pipeline import PipelineUtils
+
+
+# get the config file loc
+snakefile_loc: Path = Path(workflow.snakefile).parent
+config_loc: Path = Path(snakefile_loc / "../config/brave_config.yaml").resolve()
+
+
+configfile: config_loc
+
+
+work_dir = config["pipeline"]["work_dir"]
+
+# =================================================================================================
+qc_config = PipelineUtils.generate_step_config(config["pipeline"], config["qc"])
+
+
+module qc:
+    snakefile:
+        "rules/qc.smk"
+    config:
+        qc_config
+
+
+# =================================================================================================
+trimming_config = PipelineUtils.generate_step_config(
+    config["pipeline"], config["trimming"]
+)
+
+
+module trimming:
+    snakefile:
+        "rules/trimming.smk"
+    config:
+        trimming_config
+
+
+# =================================================================================================
+alignment_config = PipelineUtils.generate_step_config(
+    config["pipeline"], config["alignment"]
+)
+
+
+module alignment:
+    snakefile:
+        "rules/alignment.smk"
+    config:
+        alignment_config
+
+
+# =================================================================================================
+metrics_config = PipelineUtils.generate_step_config(
+    config["pipeline"], config["metrics"]
+)
+
+
+module metrics:
+    snakefile:
+        "rules/metrics.smk"
+    config:
+        metrics_config
+
+
+# =================================================================================================
+use rule * from qc as qc_*
+
+
+use rule * from trimming as trimming_*
+
+
+use rule * from alignment as alignment_*
+
+
+use rule * from metrics as metrics_*
+
+
+# =================================================================================================
+rule rna_seq_all:
+    input:
+        rules.qc_all.input,
+        rules.trimming_all.input,
+        rules.alignment_all.input,
+        rules.metrics_all.input,
+    default_target: True
