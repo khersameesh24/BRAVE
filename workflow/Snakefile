@@ -21,19 +21,6 @@ module qc:
 
 
 # =================================================================================================
-trimming_config = PipelineUtils.generate_step_config(
-    config["pipeline"], config["trimming"]
-)
-
-
-module trimming:
-    snakefile:
-        "rules/trimming.smk"
-    config:
-        trimming_config
-
-
-# =================================================================================================
 alignment_config = PipelineUtils.generate_step_config(
     config["pipeline"], config["alignment"]
 )
@@ -74,9 +61,6 @@ module counts:
 use rule * from qc as qc_*
 
 
-use rule * from trimming as trimming_*
-
-
 use rule * from alignment as alignment_*
 
 
@@ -90,7 +74,6 @@ use rule * from counts as counts_*
 rule brave:
     input:
         rules.qc_all.input,
-        rules.trimming_all.input,
         rules.alignment_all.input,
         rules.metrics_all.input,
         rules.counts_all.input,

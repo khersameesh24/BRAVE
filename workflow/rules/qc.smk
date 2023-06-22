@@ -4,7 +4,6 @@ from pathlib import Path
 # get local modules
 from utils.utils_qc import QCUtils
 
-print(config)
 # define data flow directories
 work_dir: Path = Path(config["work_dir"])
 input_dir: Path = Path(config["pipeline_input"])
@@ -37,38 +36,44 @@ rule all:
         temp(touch(f"{work_dir}/progress/qc.done")),
 
 
-rule run_fastqc:
+rule run_fastp:
     """
-    Runs Fastqc - A high throughput sequence QC analysis tool
+    Runs Fastp - remove low quality reads, adapters and
+    polyG tails & detects adapters
     """
     input:
         fastq_R1=input_dir / "{sample}_R1.fastq.gz",
         fastq_R2=input_dir / "{sample}_R2.fastq.gz",
     output:
-        fastq_zip_R1=output_dir / "{sample}_R1_fastqc.zip",
-        fastq_html_R1=output_dir / "{sample}_R1_fastqc.html",
-        fastq_zip_R2=output_dir / "{sample}_R2_fastqc.zip",
-        fastq_html_R2=output_dir / "{sample}_R2_fastqc.html",
+        trimmed_fastq_R1=output_dir / "{sample}_R1.trimmed.fastq.gz",
+        trimmed_fastq_R2=output_dir / "{sample}_R2.trimmed.fastq.gz",
+        html=output_dir / "{sample}.html",
+        json=output_dir / "{sample}.json",
     params:
-        outdir=output_dir,
+        length=50,
     priority: 1
     conda:
         "../envs/env_qc.yaml"
     message:
-        "Running FastQC for sample {wildcards.sample}"
+        "Running Fastp for sample {wildcards.sample}"
     log:
-        log_dir / "{sample}_fastqc.log",
+        log_dir / "{sample}_qc.log",
     benchmark:
-        benchmarks_dir / "{sample}_fastqc.benchmark.txt"
+        benchmarks_dir / "{sample}_qc.benchmark.txt"
     threads: config["threads"]
     resources:
         mem_gb=4,
     shell:
         """
-        mkdir -p {params.outdir}
-
-        fastqc {input.fastq_R1} {input.fastq_R2} \
-        -t {threads} \
-        --outdir {params.outdir} \
+        fastp \
+        --in1 {input.fastq_R1} \
+        --in2 {input.fastq_R2} \
+        --out1 {output.trimmed_fastq_R1} \
+        --out2 {output.trimmed_fastq_R2} \
+        --length_required {params.length} \
+        --thread {threads} \
+        --html {output.html} \
+        --json {output.json} \
+        --report_title "{wildcards.sample} fastp report" \
         &> {log}
         """

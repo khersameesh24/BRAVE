@@ -15,7 +15,7 @@ pipeline:
   work_dir: null
 qc:
   extract: true
-  output_dir: /qc
+  output_dir: /trimmed
 counts:
   input_dir: /mapped
   output_dir: /counts
@@ -26,5 +26,3 @@ alignment:
   input_dir: /trimmed
   output_dir: /mapped
   ref_genome: /reference_genome
-trimming:
-  output_dir: /trimmed

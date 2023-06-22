@@ -76,8 +76,8 @@ rule run_star_alignment:
     get the counts matrix
     """
     input:
-        fastq_R1=input_dir / "{sample}_R1_val_1.fq.gz",
-        fastq_R2=input_dir / "{sample}_R2_val_2.fq.gz",
+        fastq_R1=input_dir / "{sample}_R1.trimmed.fastq.gz",
+        fastq_R2=input_dir / "{sample}_R2.trimmed.fastq.gz",
         gtf=work_dir / "chr22_genes.gtf",
         ref_genome=rules.run_star_generate_index.output.ref_genome,
     output:
@@ -94,9 +94,9 @@ rule run_star_alignment:
     message:
         "Running STAR Alignment for sample {wildcards.sample}"
     log:
-        log_dir / "{sample}.star.log",
+        log_dir / "{sample}.alignment.log",
     benchmark:
-        benchmarks_dir / "{sample}.star.benchmark.txt"
+        benchmarks_dir / "{sample}.alignment.benchmark.txt"
     threads: config["threads"]
     shell:
         """

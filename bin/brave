@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from cli import analysis, stage
+from modules import analysis, stage
 from workflow.utils.utils_pipeline import PipelineUtils
 
 

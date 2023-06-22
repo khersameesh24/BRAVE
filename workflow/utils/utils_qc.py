@@ -23,16 +23,22 @@ class QCUtils:
             sample_type - type of library (paired/unpaired) default - paired
         """
         terminal_files: list = []
-        output_ext: list = ["fastqc.zip", "fastqc.html"]
         if sample_type == "paired":
             paired_end_reads: list = ["R1", "R2"]
-
             terminal_files = expand(
-                "{out_dir}/{sample}_{read}_{ext}",
+                "{out_dir}/{sample}_{read}.{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
                 read=paired_end_reads,
-                ext=output_ext,
+                ext="trimmed.fastq.gz",
+            )
+            terminal_files.extend(
+                expand(
+                    "{out_dir}/{sample}.{ext}",
+                    out_dir=out_dir,
+                    sample=flattened_sample_list,
+                    ext=["html", "json"]
+                )
             )
 
         elif sample_type == "unpaired":
@@ -40,7 +46,7 @@ class QCUtils:
                 "{out_dir}/{sample}_{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
-                ext=output_ext,
+                ext="trimmed.fastq.gz",
             )
 
         return terminal_files

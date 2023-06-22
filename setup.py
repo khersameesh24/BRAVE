@@ -13,7 +13,7 @@ setup(
     author_email="khersameesh24@gmail.com",
     maintainer="Sameesh Kher",
     maintainer_email="khersameesh24@gmail.com",
-    packages=["workflow", "config", "resources", "workflow/utils", "cli"],
+    packages=["workflow", "config", "resources", "workflow/utils", "modules"],
     python_requires=">=3.9",
     install_requires=[
         "coverage==7.2.7",

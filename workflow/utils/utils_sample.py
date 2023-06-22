@@ -25,9 +25,9 @@ class SampleUtils:
 
         for sample_info in sheet_data:
             if sample_info["sampleType"] == "control":
-                sample_info["control"].append(sample_info["sampleID"])
+                samples["control"].append(sample_info["sampleID"])
             elif sample_info["sampleType"] == "condition":
-                sample_info["condition"].append(sample_info["sampleID"])
+                samples["condition"].append(sample_info["sampleID"])
 
             samples["fastq_files"].extend(
                 [sample_info["read1"], sample_info["read2"]]
