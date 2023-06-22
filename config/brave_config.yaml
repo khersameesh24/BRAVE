@@ -1,39 +1,30 @@
-alignment:
-  env: env_alignment
-  input_dir: /trimmed
-  output_dir: /aligned
-  ref_genome: /reference_genome
-feature_counts:
-  output_dir: /counts
-metrics:
-  env: env_metrics
-  input_dir: /aligned
-  output_dir: /metrics
 pipeline:
   benchmarks_dir: /benchmarks
   fastq_ext: .fastq.gz
   log_dir: /logs
-  pipeline_input: /home/sameesh/Portfolio/test_data/
+  pipeline_input: null
   results: /results
   sample_groups:
-    condition:
-    - HBR_Rep1
-    - HBR_Rep2
-    - HBR_Rep3
-    control:
-    - UHR_Rep1
-    - UHR_Rep2
-    - UHR_Rep3
+    condition: null
+    control: null
   sample_type: paired
+  sample_fastq:
+    condition: null
+    control: null
   threads: 6
-  work_dir: /home/sameesh/Portfolio/test_data
+  work_dir: null
 qc:
-  env: env_qc
   extract: true
   output_dir: /qc
-samtools:
-  input_dir: /aligned
-  output_dir: /indexed
+counts:
+  input_dir: /mapped
+  output_dir: /counts
+metrics:
+  input_dir: /mapped
+  output_dir: /metrics
+alignment:
+  input_dir: /trimmed
+  output_dir: /mapped
+  ref_genome: /reference_genome
 trimming:
-  env: env_trimming
   output_dir: /trimmed

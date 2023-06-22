@@ -9,8 +9,6 @@ config_loc: Path = Path(snakefile_loc / "../config/brave_config.yaml").resolve()
 configfile: config_loc
 
 
-work_dir = config["pipeline"]["work_dir"]
-
 # =================================================================================================
 qc_config = PipelineUtils.generate_step_config(config["pipeline"], config["qc"])
 
@@ -62,6 +60,17 @@ module metrics:
 
 
 # =================================================================================================
+counts_config = PipelineUtils.generate_step_config(config["pipeline"], config["counts"])
+
+
+module counts:
+    snakefile:
+        "rules/counts.smk"
+    config:
+        counts_config
+
+
+# =================================================================================================
 use rule * from qc as qc_*
 
 
@@ -74,11 +83,15 @@ use rule * from alignment as alignment_*
 use rule * from metrics as metrics_*
 
 
+use rule * from counts as counts_*
+
+
 # =================================================================================================
-rule rna_seq_all:
+rule brave:
     input:
         rules.qc_all.input,
         rules.trimming_all.input,
         rules.alignment_all.input,
         rules.metrics_all.input,
+        rules.counts_all.input,
     default_target: True

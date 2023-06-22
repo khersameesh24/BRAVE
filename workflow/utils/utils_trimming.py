@@ -24,13 +24,13 @@ class TrimmingUtils:
         """
         terminal_files: list = []
         if sample_type == "paired":
-            output_ext: list = [
+            output_ext = [
                 "R1_val_1.fq.gz",
                 "R1.fastq.gz_trimming_report.txt",
                 "R2_val_2.fq.gz",
                 "R2.fastq.gz_trimming_report.txt",
             ]
-            terminal_files: list = expand(
+            terminal_files = expand(
                 "{out_dir}/{sample}_{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
@@ -38,11 +38,11 @@ class TrimmingUtils:
             )
 
         elif sample_type == "unpaired":
-            output_ext: list = [
+            output_ext = [
                 "_trimmed.fq.gz",
                 ".fastq.gz_trimming_report.txt",
             ]
-            terminal_files: list = expand(
+            terminal_files = expand(
                 "{out_dir}/{sample}{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,

@@ -19,13 +19,22 @@ class MetricsUtils:
         """
         terminal_files: list = []
 
-        # picard buildbam index output
+        # samtools index output
         terminal_files.extend(
             expand(
                 "{in_dir}/{sample}_{ext}",
                 in_dir=in_dir,
                 sample=flattened_sample_list,
-                ext="Aligned.sortedByCoord.out.bai"
+                ext="Aligned.sortedByCoord.out.bai",
+            )
+        )
+        # samtools stats output
+        terminal_files.extend(
+            expand(
+                "{out_dir}/stats/{sample}_{ext}",
+                out_dir=out_dir,
+                sample=flattened_sample_list,
+                ext="Aligned.sortedByCoord.out.bam_stats.txt",
             )
         )
         # picard estimate lib complexity
@@ -34,7 +43,7 @@ class MetricsUtils:
                 "{out_dir}/libcomplexity_metrics/{sample}.{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
-                ext="est_lib_complex_metrics.txt"
+                ext="est_lib_complex_metrics.txt",
             )
         )
         # picard markduplicates
@@ -43,8 +52,10 @@ class MetricsUtils:
                 "{out_dir}/markdup/{sample}{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
-                ext=["_Aligned.sortedByCoord.out.markdup.bam",
-                     ".MarkDuplicates.metrics.txt"]
+                ext=[
+                    "_Aligned.sortedByCoord.out.markdup.bam",
+                    ".MarkDuplicates.metrics.txt",
+                ],
             )
         )
         # picard alignment summary
@@ -53,7 +64,7 @@ class MetricsUtils:
                 "{out_dir}/alignment_summary_metrics/{sample}_{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
-                ext="alignment_summary_metrics.txt"
+                ext="alignment_summary_metrics.txt",
             )
         )
         # picard gcbias
@@ -66,7 +77,7 @@ class MetricsUtils:
                     "gcbias.metrics.txt",
                     "gcbias.metrics.pdf",
                     "gcbias.metrics.summary.txt",
-                ]
+                ],
             )
         )
         # picard insert size
@@ -75,10 +86,7 @@ class MetricsUtils:
                 "{out_dir}/insert_size_metrics/{sample}.{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
-                ext=[
-                    "insert_size_metrics.txt",
-                    "insert_size_Histogram.pdf",
-                ]
+                ext=["insert_size_metrics.txt", "insert_size_Histogram.pdf"],
             )
         )
         # rnaseq metrics
@@ -87,7 +95,7 @@ class MetricsUtils:
                 "{out_dir}/rnaseq_metrics/{sample}.{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
-                ext="rna_metrics"
+                ext="rna_metrics",
             )
         )
 

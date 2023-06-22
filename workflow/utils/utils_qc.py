@@ -27,7 +27,7 @@ class QCUtils:
         if sample_type == "paired":
             paired_end_reads: list = ["R1", "R2"]
 
-            terminal_files: list = expand(
+            terminal_files = expand(
                 "{out_dir}/{sample}_{read}_{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,
@@ -36,7 +36,7 @@ class QCUtils:
             )
 
         elif sample_type == "unpaired":
-            terminal_files: list = expand(
+            terminal_files = expand(
                 "{out_dir}/{sample}_{ext}",
                 out_dir=out_dir,
                 sample=flattened_sample_list,

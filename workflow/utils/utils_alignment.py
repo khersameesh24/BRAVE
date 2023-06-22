@@ -27,12 +27,11 @@ class AlignmentUtils:
             "Aligned.sortedByCoord.out.bam",
             "ReadsPerGene.out.tab",
             "SJ.out.tab",
-            "Aligned.out.bam",
             "Log.out",
             "Log.final.out",
             "Log.progress.out",
         ]
-        terminal_files: list = expand(
+        terminal_files = expand(
             "{out_dir}/{sample}_{ext}",
             out_dir=out_dir,
             sample=flattened_sample_list,

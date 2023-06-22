@@ -30,15 +30,18 @@ terminal_files: list = MetricsUtils.generate_terminal_files(
 
 
 rule all:
+    """
+    Generate all terminal files for the snakemake rule(s) below
+    """
     input:
         terminal_files,
     output:
-        temp(touch(f"{work_dir}/progress/picard.done")),
+        temp(touch(f"{work_dir}/progress/metrics.done")),
 
 
-rule run_picard_build_index:
+rule run_samtools_build_index:
     """
-    Runs picard `BuildBamIndex` and generates bam index that
+    Runs samtools `index` and generates bam index that
     allows fast look-up of data in a BAM file
     """
     input:
@@ -49,20 +52,52 @@ rule run_picard_build_index:
         "../envs/env_metrics.yaml"
     priority: 1
     message:
-        "Running picard `BuildBamIndex` for sample {wildcards.sample}"
+        "Running samtools `index` for sample {wildcards.sample}"
     log:
         log_dir / "build_index" / "{sample}.build_index.log",
     benchmark:
-        benchmarks_dir / "build_index" / "{sample}.alignment_summary_metrics.benchmark.txt"
+        benchmarks_dir / "build_index" / "{sample}.build_index.benchmark.txt"
     threads: config["threads"]
     resources:
         mem_gb=8,
     shell:
         """
-        picard \
-        BuildBamIndex \
-        --INPUT {input.bam_in} \
-        --OUTPUT {output.bam_bai} \
+        samtools \
+        index {input.bam_in} \
+        {output.bam_bai} \
+        -@ {threads} \
+        &> {log}
+        """
+
+
+rule run_samtools_bam_stats:
+    """
+    Runs samtools `index` and generates bam index that
+    allows fast look-up of data in a BAM file
+    """
+    input:
+        bam_in=input_dir / "{sample}_Aligned.sortedByCoord.out.bam",
+    output:
+        bam_stats=output_dir
+        / "stats"
+        / "{sample}_Aligned.sortedByCoord.out.bam_stats.txt",
+    conda:
+        "../envs/env_metrics.yaml"
+    message:
+        "Running samtools `stats` for sample {wildcards.sample}"
+    log:
+        log_dir / "stats" / "{sample}.stats.log",
+    benchmark:
+        benchmarks_dir / "stats" / "{sample}.stats.benchmark.txt"
+    threads: config["threads"]
+    resources:
+        mem_gb=8,
+    shell:
+        """
+        samtools \
+        stats {input.bam_in} \
+        &> {output.bam_stats} \
+        -@ {threads} \
         &> {log}
         """
 

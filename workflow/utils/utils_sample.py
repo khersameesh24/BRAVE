@@ -1,6 +1,6 @@
+import sys
 import csv
 from pathlib import Path
-import yaml
 
 
 class SampleUtils:
@@ -15,56 +15,36 @@ class SampleUtils:
         Args:
             samplesheet - path to the sample-sheet.csv
         """
-        samples = []
+        sheet_data: list = []
+        samples: dict = {"control": [], "condition": [], "fastq_files": []}
         if Path(samplesheet).exists():
             with open(samplesheet, "r", encoding="utf-8") as sheet:
                 samples_sheet = csv.DictReader(sheet)
                 for sample_info in samples_sheet:
-                    samples.append(sample_info)
+                    sheet_data.append(sample_info)
 
-            return samples
-        else:
-            raise FileExistsError("Check if the samplesheet path")
+        for sample_info in sheet_data:
+            if sample_info["sampleType"] == "control":
+                sample_info["control"].append(sample_info["sampleID"])
+            elif sample_info["sampleType"] == "condition":
+                sample_info["condition"].append(sample_info["sampleID"])
+
+            samples["fastq_files"].extend(
+                [sample_info["read1"], sample_info["read2"]]
+            )
+
+        return samples
 
     @staticmethod
-    def update_config_samples(
-        samplesheet: Path, config_path: Path, pipeline_input: Path = None
-    ) -> None:
+    def check_fastq_files(in_dir: Path, sample_files: list):
         """
-        Update sample info in the brave config
-        Args:
-            samplesheet - path to the sample-sheet.csv
-            config_path - path to the brave config file 
+        Check if the fastq files states in the samplesheet
+        are present on the input directory path
         """
-        samples: list = SampleUtils.get_sample_info(samplesheet)
-        config_dict: dict = {}
-        if Path(config_path).exists():
-            with open(config_path, "r", encoding="utf-8") as config:
-                config_dict = yaml.full_load(config)
-
-                samples_control: list = [
-                    sample["sampleID"]
-                    for sample in samples
-                    if sample["sampleType"] == "control"
-                ]
-                samples_condition: list = [
-                    sample["sampleID"]
-                    for sample in samples
-                    if sample["sampleType"] == "condition"
-                ]
-                config_dict["pipeline"]["sample_groups"][
-                    "control"
-                ] = samples_control
-                config_dict["pipeline"]["sample_groups"][
-                    "condition"
-                ] = samples_condition
-
-            if pipeline_input:
-                config_dict["pipeline"]["pipeline_input"] = pipeline_input
-
-            with open(config_path, "w", encoding="utf-8") as config:
-                yaml.dump(config_dict, config)
-        else:
-            raise FileExistsError("Check if the config file exists.")
-
-        return None
+        for fastq in sample_files:
+            path = Path(f"{in_dir}/{fastq}")
+            if not Path(path).exists():
+                print(
+                    f"Fastq file {fastq} in samplesheet not found on the {in_dir}"
+                )
+                sys.exit(1)

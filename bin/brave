@@ -3,17 +3,31 @@
 import argparse
 import sys
 from cli import analysis, stage
+from workflow.utils.utils_pipeline import PipelineUtils
 
 
-def brave_executor(cmd_line_args):
+__version__: str = PipelineUtils.get_version_info()
+DESCRIPTION: str = f"BRAVE {__version__} - Bulk RNA-seq Analysis and Visualization Engine"
+
+
+def brave_executor(cmd_line_args) -> None:
     """
     main pipeline executor
     """
     parser = argparse.ArgumentParser(
-        description="BRAVE - Bulk RNA-seq Analysis and Visualization Engine"
+        description=DESCRIPTION,
+        prog="brave"
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        help="Brave version info.",
+        required=False,
+        action="store_true",
+        default=__version__
     )
     # Create a sub-parser
-    subparsers = parser.add_subparsers(title="module", dest="module")
+    subparsers = parser.add_subparsers(title="mode", dest="mode")
 
     # Create a parser for analysis module
     subparser_analysis = subparsers.add_parser(
@@ -29,14 +43,22 @@ def brave_executor(cmd_line_args):
     )
     stage.parse_args(subparser_stage)
 
+    if len(sys.argv) < 2:
+        parser.print_help()
+        sys.exit(1)
+
+    if "--version" in sys.argv[1:] and len(sys.argv[1:]) == 1:
+        print("BRAVE ", __version__)
+        sys.exit(0)
+
     # Parse the command line arguments
     args = parser.parse_args(cmd_line_args)
 
     # Check for the selected module/sub-command
-    if args.module == "analysis":
+    if args.mode == "analysis":
         analysis.execute_workflow(args)
-    elif args.module == 'stage':
-        stage.execute_workflow(args)
+    # elif args.mode == 'stage':
+    #     stage.execute_workflow(args)
 
 
 if __name__ == "__main__":
