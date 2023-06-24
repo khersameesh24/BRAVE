@@ -68,7 +68,6 @@ class PipelineUtils:
             samples = SampleUtils.get_sample_info(
                 samplesheet=args.sample_sheet
             )
-            print(samples)
             # check if the fastq files exists on the input directory
             SampleUtils.check_fastq_files(
                 args.input_dir, samples["fastq_files"]

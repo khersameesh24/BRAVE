@@ -1,0 +1,45 @@
+# Specify the modules to run
+run_modules:
+  - fastp
+  - star
+  - picard
+  - samtools
+  - featureCounts
+
+module_order:
+  - fastp
+  - star
+  - picard
+  - samtools
+  - featureCounts
+
+# Specifiy file patterns to recognise
+sp:
+  fastp:
+    fn: "*.json"
+
+  star:
+    fn: "*Log.final.out"
+  star/genecounts:
+    fn: "*ReadsPerGene.out.tab"
+
+  picard/alignment_metrics:
+    fn: "*alignment_summary_metrics.txt"
+
+  picard/gcbias:
+    fn: "*gcbias.metrics.summary.txt"
+
+  picard/insertsize:
+    fn: "*insert_size_metrics.txt"
+
+  picard/markdups:
+    fn: "*MarkDuplicates.metrics.txt"
+
+  picard/rnaseqmetrics:
+    fn: "*rna_metrics"
+
+  samtools/stats:
+    fn: "*Aligned.sortedByCoord.out.bam_stats.txt"
+
+  featureCounts:
+    fn: "*.summary"

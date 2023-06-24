@@ -58,6 +58,19 @@ module counts:
 
 
 # =================================================================================================
+aggregate_config = PipelineUtils.generate_step_config(
+    config["pipeline"], config["aggregate"]
+)
+
+
+module aggregate:
+    snakefile:
+        "rules/aggregate.smk"
+    config:
+        aggregate_config
+
+
+# =================================================================================================
 use rule * from qc as qc_*
 
 
@@ -70,6 +83,9 @@ use rule * from metrics as metrics_*
 use rule * from counts as counts_*
 
 
+use rule * from aggregate as aggregate_*
+
+
 # =================================================================================================
 rule brave:
     input:
@@ -77,4 +93,5 @@ rule brave:
         rules.alignment_all.input,
         rules.metrics_all.input,
         rules.counts_all.input,
+        rules.aggregate_all.input,
     default_target: True

@@ -26,3 +26,5 @@ alignment:
   input_dir: /trimmed
   output_dir: /mapped
   ref_genome: /reference_genome
+aggregate:
+  output_dir: /aggregate
