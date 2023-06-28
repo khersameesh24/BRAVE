@@ -23,9 +23,7 @@ class PipelineUtils:
         """
         Get the available free memory for a brave run
         """
-        available_memory: float = abs(
-            int(ps.virtual_memory().available / (1024 * 1024))
-        )
+        available_memory: float = abs(int(ps.virtual_memory().available / (1024 * 1024)))
         return available_memory
 
     @staticmethod
@@ -33,8 +31,8 @@ class PipelineUtils:
         """
         Get the number of cores available for a brave run
         """
-        available_cores: int = int(abs(mp.cpu_count() * 0.75))
-        return available_cores
+        max_cores: int = int(abs(mp.cpu_count() * 0.75))
+        return max_cores
 
     @staticmethod
     def generate_step_config(pipeline_config: dict, step_config: dict) -> dict:
@@ -51,7 +49,11 @@ class PipelineUtils:
         """
         Generate a config dict to be passed to the snakemake executor
         """
-        config: dict = {"pipeline": {}, "config_file": ""}
+        config: dict = {
+            "pipeline": {
+                "sample_groups": {"control": [], "condition": []},
+            },
+        }
 
         # check if the input path exists
         if Path(args.input_dir).exists():
@@ -65,14 +67,12 @@ class PipelineUtils:
 
         # get the sample info from samplesheet
         if Path(args.sample_sheet).exists():
-            samples = SampleUtils.get_sample_info(
-                samplesheet=args.sample_sheet
-            )
+            samples = SampleUtils.get_sample_info(samplesheet=args.sample_sheet)
             # check if the fastq files exists on the input directory
-            SampleUtils.check_fastq_files(
-                args.input_dir, samples["fastq_files"]
-            )
-            config["pipeline"]["sample_groups"] = samples
+            SampleUtils.check_fastq_files(in_dir=args.input_dir, samples=samples)
+            config["pipeline"]["sample_groups"]["condition"] = samples["condition"]
+            config["pipeline"]["sample_groups"]["control"] = samples["control"]
+            config["pipeline"]["sample_fastq"] = samples["sample_fastq"]
         else:
             print("Check if the sample-sheet path exists.")
             exit(1)

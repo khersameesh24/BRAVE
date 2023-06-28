@@ -37,7 +37,7 @@ class QCUtils:
                     "{out_dir}/{sample}.{ext}",
                     out_dir=out_dir,
                     sample=flattened_sample_list,
-                    ext=["html", "json"]
+                    ext=["html", "json"],
                 )
             )
 

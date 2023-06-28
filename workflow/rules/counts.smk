@@ -53,6 +53,7 @@ rule run_featurecounts:
         gtf=work_dir / "chr22_genes.gtf",
     output:
         counts_out=output_dir / "counts.out",
+        final_out=output_dir / "final_counts.out",
         counts_summary=output_dir / "counts.out.summary",
     params:
         count_read_pairs="--countReadPairs" if config["sample_type"] == "paired" else "",
@@ -78,4 +79,7 @@ rule run_featurecounts:
         {params.count_read_pairs} \
         {params.paired_end} \
         &> {log}
+
+        sed -i '1d' {output.counts_out}
+        cut -f1,7- {output.counts_out} > {output.final_out}
         """

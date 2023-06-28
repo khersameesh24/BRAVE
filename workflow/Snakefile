@@ -1,15 +1,20 @@
 from utils.utils_pipeline import PipelineUtils
-
+from snakemake.utils import validate
 
 # get the config file loc
 snakefile_loc: Path = Path(workflow.snakefile).parent
 config_loc: Path = Path(snakefile_loc / "../config/brave_config.yaml").resolve()
+schema_loc: Path = Path(snakefile_loc / "../config/config.schema.yaml").resolve()
 
 
 configfile: config_loc
 
 
+# validate config wit the schema
+validate(config, schema_loc)
+
 # =================================================================================================
+# get the qc module
 qc_config = PipelineUtils.generate_step_config(config["pipeline"], config["qc"])
 
 
@@ -21,6 +26,7 @@ module qc:
 
 
 # =================================================================================================
+# get the alignment module
 alignment_config = PipelineUtils.generate_step_config(
     config["pipeline"], config["alignment"]
 )
@@ -34,6 +40,7 @@ module alignment:
 
 
 # =================================================================================================
+# get the metrics module
 metrics_config = PipelineUtils.generate_step_config(
     config["pipeline"], config["metrics"]
 )
@@ -47,6 +54,7 @@ module metrics:
 
 
 # =================================================================================================
+# get the counts module
 counts_config = PipelineUtils.generate_step_config(config["pipeline"], config["counts"])
 
 
@@ -58,6 +66,7 @@ module counts:
 
 
 # =================================================================================================
+# get the aggregate module
 aggregate_config = PipelineUtils.generate_step_config(
     config["pipeline"], config["aggregate"]
 )
@@ -71,6 +80,21 @@ module aggregate:
 
 
 # =================================================================================================
+# get the diffexp module
+diffexp_config = PipelineUtils.generate_step_config(
+    config["pipeline"], config["diffexp"]
+)
+
+
+module diffexp:
+    snakefile:
+        "rules/diffexp.smk"
+    config:
+        diffexp_config
+
+
+# =================================================================================================
+# run all rules from the declared modules
 use rule * from qc as qc_*
 
 
@@ -86,7 +110,11 @@ use rule * from counts as counts_*
 use rule * from aggregate as aggregate_*
 
 
+use rule * from diffexp as diffexp_*
+
+
 # =================================================================================================
+# orchestrate via rule all to generate output files from all modules
 rule brave:
     input:
         rules.qc_all.input,
@@ -94,4 +122,5 @@ rule brave:
         rules.metrics_all.input,
         rules.counts_all.input,
         rules.aggregate_all.input,
+        rules.diffexp_all.input,
     default_target: True

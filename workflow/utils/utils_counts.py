@@ -25,6 +25,7 @@ class CountsUtils:
 
         terminal_files = [
             f"{out_dir}/counts.out",
+            f"{out_dir}/final_counts.out",
             f"{out_dir}/counts.out.summary",
         ]
 

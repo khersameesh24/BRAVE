@@ -8,9 +8,7 @@ class MetricsUtils:
     """
 
     @staticmethod
-    def generate_terminal_files(
-        in_dir: Path, out_dir: Path, flattened_sample_list: list
-    ) -> list:
+    def generate_terminal_files(in_dir: Path, out_dir: Path, flattened_sample_list: list) -> list:
         """
         Generate terminal files as final output files for picard rules.
         Args:

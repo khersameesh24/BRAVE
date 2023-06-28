@@ -112,6 +112,7 @@ rule run_multiqc:
     params:
         config_file=aggregate_config,
         html_filename="brave_analysis_aggregated_report",
+        title="'BRAVE - Bulk RNASeq Analysis and Visualization Engine'",
     conda:
         "../envs/env_aggregate.yaml"
     message:
@@ -130,6 +131,7 @@ rule run_multiqc:
         --filename {output.html_report} \
         --outdir {output.aggregate_outdir} \
         {input} \
-        -f \
+        --title {params.title} \
+        --force \
         &> {log}
         """

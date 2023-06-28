@@ -300,6 +300,7 @@ rule run_picard_rnaseq_metrics:
     input:
         bam_in=input_dir / "{sample}_Aligned.sortedByCoord.out.bam",
         ref_flat_txt=work_dir / "refFlat_chr22.txt",
+        ribosomal_intervals=work_dir / "ribosomal.interval_list",
     output:
         rnaseq_metrics=output_dir / "rnaseq_metrics" / "{sample}.rna_metrics",
     params:

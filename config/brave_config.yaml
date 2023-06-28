@@ -14,7 +14,6 @@ pipeline:
   threads: 6
   work_dir: null
 qc:
-  extract: true
   output_dir: /trimmed
 counts:
   input_dir: /mapped
@@ -28,3 +27,6 @@ alignment:
   ref_genome: /reference_genome
 aggregate:
   output_dir: /aggregate
+diffexp:
+  input_dir: /counts
+  output_dir: /diffexp

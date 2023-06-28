@@ -1,3 +1,15 @@
+# title and introductory test
+title: "BRAVE - Bulk RNASeq Analysis and Visualization Engine"
+subtitle: "Brave is a end-to-end RNASeq analysis pipeline and integrates qc, alignment, post-alignment metrics, differential expression analysis and results aggregation"
+intro_text: "The BRAVE report summarizes results from tools like Fastp, STAR, Picard, Samtools & FeatureCounts"
+
+# report time and analysis paths
+show_analysis_paths: False
+show_analysis_time: True
+
+# report logo
+custom_logo: "logo.png"
+
 # Specify the modules to run
 run_modules:
   - fastp

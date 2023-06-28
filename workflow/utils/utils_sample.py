@@ -16,7 +16,11 @@ class SampleUtils:
             samplesheet - path to the sample-sheet.csv
         """
         sheet_data: list = []
-        samples: dict = {"control": [], "condition": [], "fastq_files": []}
+        samples: dict = {
+            "control": [],
+            "condition": [],
+            "sample_fastq": {"control": [], "condition": []},
+        }
         if Path(samplesheet).exists():
             with open(samplesheet, "r", encoding="utf-8") as sheet:
                 samples_sheet = csv.DictReader(sheet)
@@ -26,25 +30,32 @@ class SampleUtils:
         for sample_info in sheet_data:
             if sample_info["sampleType"] == "control":
                 samples["control"].append(sample_info["sampleID"])
+                samples["sample_fastq"]["control"].extend(
+                    [sample_info["read1"], sample_info["read2"]]
+                )
             elif sample_info["sampleType"] == "condition":
                 samples["condition"].append(sample_info["sampleID"])
-
-            samples["fastq_files"].extend(
-                [sample_info["read1"], sample_info["read2"]]
-            )
+                samples["sample_fastq"]["condition"].extend(
+                    [sample_info["read1"], sample_info["read2"]]
+                )
 
         return samples
 
     @staticmethod
-    def check_fastq_files(in_dir: Path, sample_files: list):
+    def check_fastq_files(in_dir: Path, samples: dict):
         """
         Check if the fastq files states in the samplesheet
         are present on the input directory path
         """
-        for fastq in sample_files:
-            path = Path(f"{in_dir}/{fastq}")
-            if not Path(path).exists():
-                print(
-                    f"Fastq file {fastq} in samplesheet not found on the {in_dir}"
-                )
+        for ctrl_fastq, cond_fastq in zip(
+            samples["sample_fastq"]["control"],
+            samples["sample_fastq"]["condition"],
+        ):
+            ctrl_path = Path(f"{in_dir}/{ctrl_fastq}")
+            cond_path = Path(f"{in_dir}/{cond_fastq}")
+            if not Path(ctrl_path).exists():
+                print(f"Fastq file {ctrl_fastq} in samplesheet not found on the {in_dir}")
+                sys.exit(1)
+            if not Path(cond_path).exists():
+                print(f"Fastq file {cond_fastq} in samplesheet not found on the {in_dir}")
                 sys.exit(1)
