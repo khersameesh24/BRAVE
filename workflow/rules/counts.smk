@@ -56,8 +56,10 @@ rule run_featurecounts:
         final_out=output_dir / "final_counts.out",
         counts_summary=output_dir / "counts.out.summary",
     params:
-        count_read_pairs="--countReadPairs" if config["sample_type"] == "paired" else "",
-        paired_end="-p" if config["sample_type"] == "paired" else "",
+        count_read_pairs="--countReadPairs"
+        if config["sample_type"] == "paired-end"
+        else "",
+        paired_end="-p" if config["sample_type"] == "paired-end" else "",
     conda:
         "../envs/env_counts.yaml"
     message:

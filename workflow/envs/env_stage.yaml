@@ -1,4 +1,4 @@
-name: sra
+name: env_stage
 channels:
   - bioconda
   - defaults
@@ -35,4 +35,3 @@ dependencies:
   - sra-tools=2.10.0=pl526he1b5a44_0
   - xz=5.4.2=h5eee18b_0
   - zlib=1.2.13=h5eee18b_0
-prefix: /home/sameesh/anaconda3/envs/sra

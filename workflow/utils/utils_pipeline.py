@@ -68,11 +68,16 @@ class PipelineUtils:
         if args.output_dir and Path(args.output_dir):
             config["pipeline"]["pipeline_output"] = args.output_dir
 
+        if args.unpaired:
+            config["pipeline"]["sample_type"] = "single-end"
+        else:
+            config["pipeline"]["sample_type"] = "paired-end"
+
         # get the sample info from samplesheet
         if Path(args.sample_sheet).exists():
             samples = SampleUtils.get_sample_info(
                 samplesheet=args.sample_sheet,
-                sample_type="single-end",
+                sample_type=config["pipeline"]["sample_type"]
             )
             # check if the fastq files exists on the input directory
             SampleUtils.check_fastq_files(
@@ -93,8 +98,5 @@ class PipelineUtils:
                 config["pipeline"]["work_dir"] = args.work_dir
         else:
             config["pipeline"]["work_dir"] = args.input_dir
-
-        if args.unpaired:
-            config["pipeline"]["sample_type"] = "single-end"
 
         return config

@@ -1,5 +1,6 @@
-from utils.utils_pipeline import PipelineUtils
 from snakemake.utils import validate
+from utils.utils_pipeline import PipelineUtils
+
 
 # get the config file loc
 snakefile_loc: Path = Path(workflow.snakefile).parent
@@ -43,8 +44,6 @@ module alignment:
 metrics_config = PipelineUtils.generate_step_config(
     config["pipeline"], config["metrics"]
 )
-
-print(metrics_config)
 
 
 module metrics:

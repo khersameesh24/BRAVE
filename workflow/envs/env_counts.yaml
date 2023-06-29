@@ -11,4 +11,3 @@ dependencies:
   - libzlib=1.2.13=hd590300_5
   - subread=2.0.3=he4a0461_3
   - zlib=1.2.13=hd590300_5
-prefix: /home/sameesh/anaconda3/envs/env_counts

@@ -1,4 +1,4 @@
-name: aggregate
+name: env_aggregate
 channels:
   - bioconda
   - conda-forge

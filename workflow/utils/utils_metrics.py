@@ -85,7 +85,6 @@ class MetricsUtils:
         )
         # picard insert size
         if sample_type == "paired-end":
-            print("Reached")
             terminal_files.extend(
                 expand(
                     "{out_dir}/insert_size_metrics/{sample}.{ext}",

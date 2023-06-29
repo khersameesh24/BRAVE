@@ -97,6 +97,8 @@ rule run_fastp_se:
         trimmed_fastq=output_dir / "{sample}.trimmed.fastq.gz",
         html=output_dir / "{sample}.html",
         json=output_dir / "{sample}.json",
+    wildcard_constraints:
+        sample="\d+"
     params:
         length=50,
     priority: 1
