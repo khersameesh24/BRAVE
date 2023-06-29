@@ -1,6 +1,7 @@
+
 from pathlib import Path
-from argparse import _ArgumentGroup
 import multiprocessing as mp
+from argparse import _ArgumentGroup
 import psutil as ps
 from workflow.utils.utils_sample import SampleUtils
 
@@ -50,6 +51,7 @@ class PipelineUtils:
     def generate_additional_config(args: _ArgumentGroup) -> dict:
         """
         Generate a config dict to be passed to the snakemake executor
+        Overwrite snakemake config from config.yaml 
         """
         config: dict = {
             "pipeline": {

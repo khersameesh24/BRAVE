@@ -1,3 +1,7 @@
+"""
+Setup brave command line utility
+"""
+
 from setuptools import setup
 from workflow.utils.utils_pipeline import PipelineUtils
 
@@ -23,6 +27,8 @@ setup(
         "charset-normalizer==3.1.0",
         "ConfigArgParse==1.5.3",
         "connection-pool==0.0.3",
+        "coverage==7.2.7",
+        "Cython==0.29.35",
         "datrie==0.8.2",
         "docutils==0.20.1",
         "dpath==2.1.5",
