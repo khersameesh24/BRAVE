@@ -8,7 +8,12 @@ class MetricsUtils:
     """
 
     @staticmethod
-    def generate_terminal_files(in_dir: Path, out_dir: Path, flattened_sample_list: list) -> list:
+    def generate_terminal_files(
+        in_dir: Path,
+        out_dir: Path,
+        flattened_sample_list: list,
+        sample_type: str = "paired-end"
+    ) -> list:
         """
         Generate terminal files as final output files for picard rules.
         Args:
@@ -79,14 +84,19 @@ class MetricsUtils:
             )
         )
         # picard insert size
-        terminal_files.extend(
-            expand(
-                "{out_dir}/insert_size_metrics/{sample}.{ext}",
-                out_dir=out_dir,
-                sample=flattened_sample_list,
-                ext=["insert_size_metrics.txt", "insert_size_Histogram.pdf"],
+        if sample_type == "paired-end":
+            print("Reached")
+            terminal_files.extend(
+                expand(
+                    "{out_dir}/insert_size_metrics/{sample}.{ext}",
+                    out_dir=out_dir,
+                    sample=flattened_sample_list,
+                    ext=[
+                        "insert_size_metrics.txt",
+                        "insert_size_Histogram.pdf"
+                    ],
+                )
             )
-        )
         # rnaseq metrics
         terminal_files.extend(
             expand(

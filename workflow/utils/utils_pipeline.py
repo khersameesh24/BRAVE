@@ -23,7 +23,9 @@ class PipelineUtils:
         """
         Get the available free memory for a brave run
         """
-        available_memory: float = abs(int(ps.virtual_memory().available / (1024 * 1024)))
+        available_memory: float = abs(
+            int(ps.virtual_memory().available / (1024 * 1024))
+        )
         return available_memory
 
     @staticmethod
@@ -52,6 +54,7 @@ class PipelineUtils:
         config: dict = {
             "pipeline": {
                 "sample_groups": {"control": [], "condition": []},
+                "sample_type": "",
             },
         }
 
@@ -67,10 +70,17 @@ class PipelineUtils:
 
         # get the sample info from samplesheet
         if Path(args.sample_sheet).exists():
-            samples = SampleUtils.get_sample_info(samplesheet=args.sample_sheet)
+            samples = SampleUtils.get_sample_info(
+                samplesheet=args.sample_sheet,
+                sample_type="single-end",
+            )
             # check if the fastq files exists on the input directory
-            SampleUtils.check_fastq_files(in_dir=args.input_dir, samples=samples)
-            config["pipeline"]["sample_groups"]["condition"] = samples["condition"]
+            SampleUtils.check_fastq_files(
+                in_dir=args.input_dir, samples=samples
+            )
+            config["pipeline"]["sample_groups"]["condition"] = samples[
+                "condition"
+            ]
             config["pipeline"]["sample_groups"]["control"] = samples["control"]
             config["pipeline"]["sample_fastq"] = samples["sample_fastq"]
         else:
@@ -85,6 +95,6 @@ class PipelineUtils:
             config["pipeline"]["work_dir"] = args.input_dir
 
         if args.unpaired:
-            config["pipeline"]["sample_type"] = "unpaired"
+            config["pipeline"]["sample_type"] = "single-end"
 
         return config

@@ -12,7 +12,6 @@ configfile: config_loc
 
 # validate config wit the schema
 validate(config, schema_loc)
-
 # =================================================================================================
 # get the qc module
 qc_config = PipelineUtils.generate_step_config(config["pipeline"], config["qc"])
@@ -44,6 +43,8 @@ module alignment:
 metrics_config = PipelineUtils.generate_step_config(
     config["pipeline"], config["metrics"]
 )
+
+print(metrics_config)
 
 
 module metrics:

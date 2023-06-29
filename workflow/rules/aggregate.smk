@@ -48,7 +48,7 @@ rule all:
 rule run_multiqc:
     """
     Runs Multiqc - & aggregates results from bioinformatics
-    analyses across many samples into a single report
+    analyses across samples into a single report
     """
     input:
         trimmed_out=expand(
@@ -79,11 +79,13 @@ rule run_multiqc:
         ),
         insert_size_metrics_out=expand(
             "{result_dir}/metrics/{metric_dir}/{sample}.{ext}",
-            result_dir=input_dir,
-            metric_dir="insert_size_metrics",
-            sample=flattended_samples,
-            ext="insert_size_metrics.txt",
-        ),
+                result_dir=input_dir,
+                metric_dir="insert_size_metrics",
+                sample=flattended_samples,
+                ext="insert_size_metrics.txt",
+            )
+            if config["sample_type"] == "paired-end"
+        else [],
         markdup_out=expand(
             "{result_dir}/metrics/{metric_dir}/{sample}.{ext}",
             result_dir=input_dir,
@@ -112,7 +114,6 @@ rule run_multiqc:
     params:
         config_file=aggregate_config,
         html_filename="brave_analysis_aggregated_report",
-        title="'BRAVE - Bulk RNASeq Analysis and Visualization Engine'",
     conda:
         "../envs/env_aggregate.yaml"
     message:
@@ -130,8 +131,15 @@ rule run_multiqc:
         --config {params.config_file} \
         --filename {output.html_report} \
         --outdir {output.aggregate_outdir} \
-        {input} \
-        --title {params.title} \
+        {input.trimmed_out} \
+        {input.mapped_out} \
+        {input.aln_summary_metrics_out} \
+        {input.gcbias_metrics_out} \
+        {input.insert_size_metrics_out} \
+        {input.markdup_out} \
+        {input.rnaseq_metrics_out} \
+        {input.bam_stats_out} \
+        {input.counts_out} \
         --force \
         &> {log}
         """

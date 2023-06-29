@@ -79,7 +79,7 @@ rule run_star_generate_index:
         """
 
 
-rule run_star_alignment:
+rule run_star_alignment_pe:
     """
     Runs star `alignReads` and generates a sorted bam file to be used to
     get the counts matrix
@@ -115,6 +115,51 @@ rule run_star_alignment:
         --runMode alignReads \
         --genomeDir {input.ref_genome} \
         --readFilesIn {input.fastq_R1} {input.fastq_R2} \
+        --outSAMtype BAM SortedByCoordinate \
+        --readFilesCommand zcat \
+        --runThreadN {threads} \
+        --quantMode GeneCounts \
+        --outFileNamePrefix {params.out_dir}/{wildcards.sample}_ \
+        --sjdbGTFfile {input.gtf} \
+        &> {log}
+        """
+
+
+rule run_star_alignment_se:
+    """
+    Runs star `alignReads` and generates a sorted bam file to be used to
+    get the counts matrix
+    """
+    input:
+        trimmed_fastq=input_dir / "{sample}.trimmed.fastq.gz",
+        gtf=work_dir / "chr22_genes.gtf",
+        ref_genome=rules.run_star_generate_index.output.ref_genome,
+    output:
+        bam_sorted=output_dir / "{sample}_Aligned.sortedByCoord.out.bam",
+        reads_per_gene=output_dir / "{sample}_ReadsPerGene.out.tab",
+        splice_junc=output_dir / "{sample}_SJ.out.tab",
+        log_final_out=output_dir / "{sample}_Log.final.out",
+        log_out=temp(output_dir / "{sample}_Log.out"),
+        progress_out=temp(output_dir / "{sample}_Log.progress.out"),
+    params:
+        out_dir=output_dir,
+    conda:
+        "../envs/env_alignment.yaml"
+    message:
+        "Running STAR Alignment for sample {wildcards.sample}"
+    log:
+        log_dir / "{sample}.alignment.log",
+    benchmark:
+        benchmarks_dir / "{sample}.alignment.benchmark.txt"
+    threads: cores * 2
+    resources:
+        mem_gb=memory,
+    shell:
+        """
+        STAR \
+        --runMode alignReads \
+        --genomeDir {input.ref_genome} \
+        --readFilesIn {input.trimmed_fastq} \
         --outSAMtype BAM SortedByCoordinate \
         --readFilesCommand zcat \
         --runThreadN {threads} \

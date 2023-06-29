@@ -51,6 +51,7 @@ def parse_args(parser: _ArgumentGroup) -> _ArgumentGroup:
         "--unpaired",
         help="Default - `paired`. Type of sequencing library preparation.",
         action="store_true",
+        default=False
     )
 
     return parser

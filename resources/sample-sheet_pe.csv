@@ -1,4 +1,4 @@
-sampleID,sampleType,read1,read2
+sampleID,sampleType,fastq1,fastq2
 HBR_Rep1,condition,HBR_Rep1_R1.fastq.gz,HBR_Rep1_R2.fastq.gz
 HBR_Rep2,condition,HBR_Rep2_R1.fastq.gz,HBR_Rep2_R2.fastq.gz
 HBR_Rep3,condition,HBR_Rep3_R1.fastq.gz,HBR_Rep3_R2.fastq.gz

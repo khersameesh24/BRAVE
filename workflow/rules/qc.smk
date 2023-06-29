@@ -41,10 +41,11 @@ rule all:
         temp(touch(f"{work_dir}/progress/qc.done")),
 
 
-rule run_fastp:
+rule run_fastp_pe:
     """
-    Runs Fastp - remove low quality reads, adapters and
-    polyG tails & detects adapters
+    Runs Fastp for paired-end seq to remove low
+    quality reads, adapters and polyG tails &
+    detects adapters
     """
     input:
         fastq_R1=input_dir / "{sample}_R1.fastq.gz",
@@ -65,7 +66,7 @@ rule run_fastp:
         log_dir / "{sample}_qc.log",
     benchmark:
         benchmarks_dir / "{sample}_qc.benchmark.txt"
-    threads: cores*2
+    threads: cores * 2
     resources:
         mem_gb=memory,
     shell:
@@ -75,6 +76,46 @@ rule run_fastp:
         --in2 {input.fastq_R2} \
         --out1 {output.trimmed_fastq_R1} \
         --out2 {output.trimmed_fastq_R2} \
+        --length_required {params.length} \
+        --thread {threads} \
+        --html {output.html} \
+        --json {output.json} \
+        --report_title "{wildcards.sample} fastp report" \
+        &> {log}
+        """
+
+
+rule run_fastp_se:
+    """
+    Runs Fastp for single-end seq to remove low
+    quality reads, adapters and polyG tails &
+    detects adapters
+    """
+    input:
+        fastq=input_dir / "{sample}.fastq.gz",
+    output:
+        trimmed_fastq=output_dir / "{sample}.trimmed.fastq.gz",
+        html=output_dir / "{sample}.html",
+        json=output_dir / "{sample}.json",
+    params:
+        length=50,
+    priority: 1
+    conda:
+        "../envs/env_qc.yaml"
+    message:
+        "Running Fastp for sample {wildcards.sample}"
+    log:
+        log_dir / "{sample}_qc.log",
+    benchmark:
+        benchmarks_dir / "{sample}_qc.benchmark.txt"
+    threads: cores * 2
+    resources:
+        mem_gb=memory,
+    shell:
+        """
+        fastp \
+        --in1 {input.fastq} \
+        --out1 {output.trimmed_fastq} \
         --length_required {params.length} \
         --thread {threads} \
         --html {output.html} \

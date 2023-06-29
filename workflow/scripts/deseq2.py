@@ -15,13 +15,14 @@ class DiffExp:
     for bulk-RNA Seq data analysis
     """
 
-    def __init__(self,
-                 counts_file: Path,
-                 num_control: int,
-                 num_condition: int,
-                 filename: Path,
-                 num_cpu: int
-                 ):
+    def __init__(
+        self,
+        counts_file: Path,
+        num_control: int,
+        num_condition: int,
+        filename: Path,
+        num_cpu: int,
+    ):
         self.counts_file: Path = counts_file
         self.num_control: int = num_control
         self.num_condition: int = num_condition
@@ -63,7 +64,7 @@ class DiffExp:
             experiment.append("Knockout")
         metadata = pd.DataFrame(
             zip(self.counts_matrix.index, experiment),
-            columns=["Sample", "Condition"]
+            columns=["Sample", "Condition"],
         )
         print(experiment)
         metadata = metadata.set_index("Sample")
@@ -78,7 +79,7 @@ class DiffExp:
         dds = DeseqDataSet(
             counts=self.counts_matrix,
             clinical=self.metadata,
-            design_factors="Condition"
+            design_factors="Condition",
         )
 
         # run deseq2
@@ -90,10 +91,11 @@ class DiffExp:
         """
         Run statistical test for differential expression
         """
-        stats = DeseqStats(self.dds,
-                           n_cpus=self.num_cpu,
-                           contrast=("Condition", "Knockout", "Control")
-                           )
+        stats = DeseqStats(
+            self.dds,
+            n_cpus=self.num_cpu,
+            contrast=("Condition", "Knockout", "Control"),
+        )
         stats.summary()
         results_df = stats.results_df
 
@@ -110,7 +112,7 @@ if __name__ == "__main__":
         help="Counts matrix file from featurecounts",
         required=True,
         type=str,
-        metavar="FILE"
+        metavar="FILE",
     )
     parser.add_argument(
         "--num-control",
@@ -131,7 +133,7 @@ if __name__ == "__main__":
         help="Output file with differential gene expression analysis",
         required=True,
         type=str,
-        metavar="FILE"
+        metavar="FILE",
     )
     parser.add_argument(
         "--cpus",
@@ -139,7 +141,7 @@ if __name__ == "__main__":
         required=False,
         default=4,
         type=int,
-        metavar="INT"
+        metavar="INT",
     )
 
     # parse args

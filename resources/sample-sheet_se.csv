@@ -1,0 +1,7 @@
+sampleID,sampleType,fastq
+HBR_Rep1,condition,HBR_Rep1.fastq.gz
+HBR_Rep2,condition,HBR_Rep2.fastq.gz
+HBR_Rep3,condition,HBR_Rep3.fastq.gz
+UHR_Rep1,control,UHR_Rep1.fastq.gz
+UHR_Rep2,control,UHR_Rep2.fastq.gz
+UHR_Rep3,control,UHR_Rep3.fastq.gz

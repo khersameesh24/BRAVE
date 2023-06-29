@@ -14,10 +14,9 @@ class AggregateUtils:
     @staticmethod
     def generate_terminal_files(out_dir: Path) -> list:
         """
-        Generate terminal files as final output files for run_trimgalore rule.
+        Generate terminal files as final output files for run_aggregate rule.
         Args:
-            out_dir - output directory to generate bam files
-            flattened_samples_list - list of combined control/condition samples
+            out_dir - output directory to generate report files
         """
         terminal_files: list = [
             Path(f"{out_dir}"),
