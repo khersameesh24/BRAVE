@@ -3,7 +3,6 @@ Utility class to generate terminal files for the fastqc snakefile
 """
 
 from pathlib import Path
-from snakemake.io import expand
 
 
 class DiffExpUtils:

@@ -7,7 +7,7 @@ pipeline:
   sample_groups:
     condition: []
     control: []
-  sample_type: single-end
+  sample_type: paired_end
   sample_fastq:
     condition: []
     control: []

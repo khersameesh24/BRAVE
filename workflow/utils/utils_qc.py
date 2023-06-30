@@ -13,17 +13,19 @@ class QCUtils:
 
     @staticmethod
     def generate_terminal_files(
-        out_dir: Path, flattened_sample_list: list, sample_type: str = "paired-end"
+        out_dir: Path,
+        flattened_sample_list: list,
+        sample_type: str = "paired_end"
     ) -> list:
         """
         Generate terminal files as final output files for run_fastp rule.
         Args:
             out_dir - output directory to generate qc reports at
             flattened_sample_list - list of combined control/condition samples
-            sample_type - type of library (paired/unpaired) default - paired
+            sample_type - type of library (paired_end/single_end) default-paired_end
         """
         terminal_files: list = []
-        if sample_type == "paired-end":
+        if sample_type == "paired_end":
             terminal_files = expand(
                 "{out_dir}/{sample}_{read}.{ext}",
                 out_dir=out_dir,
@@ -32,7 +34,7 @@ class QCUtils:
                 ext="trimmed.fastq.gz",
             )
 
-        elif sample_type == "single-end":
+        elif sample_type == "single_end":
             terminal_files = expand(
                 "{out_dir}/{sample}.{ext}",
                 out_dir=out_dir,

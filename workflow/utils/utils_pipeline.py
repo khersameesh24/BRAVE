@@ -51,7 +51,7 @@ class PipelineUtils:
     def generate_additional_config(args: _ArgumentGroup) -> dict:
         """
         Generate a config dict to be passed to the snakemake executor
-        Overwrite snakemake config from config.yaml 
+        Overwrite snakemake config from config.yaml
         """
         config: dict = {
             "pipeline": {
@@ -71,9 +71,9 @@ class PipelineUtils:
             config["pipeline"]["pipeline_output"] = args.output_dir
 
         if args.unpaired:
-            config["pipeline"]["sample_type"] = "single-end"
+            config["pipeline"]["sample_type"] = "single_end"
         else:
-            config["pipeline"]["sample_type"] = "paired-end"
+            config["pipeline"]["sample_type"] = "paired_end"
 
         # get the sample info from samplesheet
         if Path(args.sample_sheet).exists():

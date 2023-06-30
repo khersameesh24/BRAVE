@@ -12,10 +12,10 @@ class TestQCUtils(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.out_dir: str = "test-out_dir"
+        self.out_dir: str = "test_outdir"
         self.flattened_samples: list = ["HBR_Rep1", "HBR_Rep2"]
 
-    def test_generate_terminal_files_pe(self):
+    def test_generate_terminal_files_pe(self) -> None:
         """
         Test if the terminal files are generated in case of
         paired-end samples
@@ -23,19 +23,26 @@ class TestQCUtils(unittest.TestCase):
         terminal_files: list = QCUtils.generate_terminal_files(
             out_dir=self.out_dir,
             flattened_sample_list=self.flattened_samples,
-            sample_type="paired",
+            sample_type="paired_end",
+        )
+        expected_file_paths: list = [
+            "test_outdir/HBR_Rep1_R1.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep1_R2.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep2_R1.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep2_R2.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep1.html",
+            "test_outdir/HBR_Rep1.json",
+            "test_outdir/HBR_Rep2.html",
+            "test_outdir/HBR_Rep2.json",
+        ]
+        self.assertListEqual(
+            terminal_files,
+            expected_file_paths,
+            ("Check if the generate_terminal_files "
+             "function has the desired output for paired_end sample type.")
         )
 
-        assert "test-out_dir/HBR_Rep1_R1.trimmed.fastq.gz" in terminal_files
-        assert "test-out_dir/HBR_Rep1_R2.trimmed.fastq.gz" in terminal_files
-        assert "test-out_dir/HBR_Rep2_R1.trimmed.fastq.gz" in terminal_files
-        assert "test-out_dir/HBR_Rep2_R2.trimmed.fastq.gz" in terminal_files
-        assert "test-out_dir/HBR_Rep1.html" in terminal_files
-        assert "test-out_dir/HBR_Rep1.json" in terminal_files
-        assert "test-out_dir/HBR_Rep2.html" in terminal_files
-        assert "test-out_dir/HBR_Rep2.json" in terminal_files
-
-    def test_generate_terminal_files_se(self):
+    def test_generate_terminal_files_se(self) -> None:
         """
         Test if the terminal files are generated in case of
         single-end samples
@@ -43,12 +50,19 @@ class TestQCUtils(unittest.TestCase):
         terminal_files: list = QCUtils.generate_terminal_files(
             out_dir=self.out_dir,
             flattened_sample_list=self.flattened_samples,
-            sample_type="unpaired",
+            sample_type="single_end",
         )
-
-        assert "test-out_dir/HBR_Rep1.trimmed.fastq.gz" in terminal_files
-        assert "test-out_dir/HBR_Rep1.html" in terminal_files
-        assert "test-out_dir/HBR_Rep1.json" in terminal_files
-        assert "test-out_dir/HBR_Rep2.trimmed.fastq.gz" in terminal_files
-        assert "test-out_dir/HBR_Rep2.html" in terminal_files
-        assert "test-out_dir/HBR_Rep2.json" in terminal_files
+        expected_file_paths: list = [
+            "test_outdir/HBR_Rep1.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep2.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep1.html",
+            "test_outdir/HBR_Rep1.json",
+            "test_outdir/HBR_Rep2.html",
+            "test_outdir/HBR_Rep2.json",
+        ]
+        self.assertListEqual(
+            terminal_files,
+            expected_file_paths,
+            ("Check if the generate_terminal_files "
+             "function has the desired output for single_end sample type.")
+        )

@@ -16,7 +16,7 @@ class TestAlignmentUtils(unittest.TestCase):
         self.out_dir: str = "test-out_dir"
         self.flattened_samples: list = ["HBR_Rep1"]
 
-    def test_generate_terminal_files(self):
+    def test_generate_terminal_files(self) -> None:
         """
         Test if the terminal files are generated for the alignment snakefile
         """
@@ -24,13 +24,15 @@ class TestAlignmentUtils(unittest.TestCase):
             out_dir=self.out_dir,
             flattened_sample_list=self.flattened_samples,
         )
-
-        assert (
-            "test-out_dir/HBR_Rep1_Aligned.sortedByCoord.out.bam"
-            in terminal_files
+        expected_file_paths: list = [
+            "test-out_dir/HBR_Rep1_Aligned.sortedByCoord.out.bam",
+            "test-out_dir/HBR_Rep1_ReadsPerGene.out.tab",
+            "test-out_dir/HBR_Rep1_SJ.out.tab",
+            "test-out_dir/HBR_Rep1_Log.out",
+            "test-out_dir/HBR_Rep1_Log.final.out",
+            "test-out_dir/HBR_Rep1_Log.progress.out"
+        ]
+        self.assertListEqual(
+            terminal_files,
+            expected_file_paths
         )
-        assert "test-out_dir/HBR_Rep1_ReadsPerGene.out.tab" in terminal_files
-        assert "test-out_dir/HBR_Rep1_SJ.out.tab" in terminal_files
-        assert "test-out_dir/HBR_Rep1_Log.out" in terminal_files
-        assert "test-out_dir/HBR_Rep1_Log.final.out" in terminal_files
-        assert "test-out_dir/HBR_Rep1_Log.progress.out" in terminal_files

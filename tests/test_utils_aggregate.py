@@ -3,6 +3,7 @@ Test module for AggregateUtils
 """
 
 import unittest
+from pathlib import Path
 from workflow.utils.utils_aggregate import AggregateUtils
 
 
@@ -13,7 +14,7 @@ class TestAggregateUtils(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.out_dir: str = "test-out_dir"
+        self.out_dir: str = "test_outdir"
 
     def test_generate_terminal_files(self):
         """
@@ -23,8 +24,11 @@ class TestAggregateUtils(unittest.TestCase):
         terminal_files: list = AggregateUtils.generate_terminal_files(
             out_dir=self.out_dir,
         )
-
-        assert (
-            "test-out_dir/brave_analysis_aggregated_report.html"
-            in terminal_files
+        expected_file_paths: list = [
+            Path("test_outdir"),
+            "test_outdir/brave_analysis_aggregated_report.html"
+        ]
+        self.assertListEqual(
+            terminal_files,
+            expected_file_paths
         )

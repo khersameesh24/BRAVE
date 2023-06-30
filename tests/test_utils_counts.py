@@ -13,7 +13,7 @@ class TestCountsUtils(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        self.out_dir: str = "test-out_dir"
+        self.out_dir: str = "test_outdir"
 
     def test_generate_terminal_files(self):
         """
@@ -23,7 +23,12 @@ class TestCountsUtils(unittest.TestCase):
         terminal_files: list = CountsUtils.generate_terminal_files(
             out_dir=self.out_dir,
         )
-
-        assert "test-out_dir/counts.out" in terminal_files
-        assert "test-out_dir/final_counts.out" in terminal_files
-        assert "test-out_dir/counts.out.summary" in terminal_files
+        expected_file_paths: list = [
+            "test_outdir/counts.out",
+            "test_outdir/final_counts.out",
+            "test_outdir/counts.out.summary"
+        ]
+        self.assertListEqual(
+            terminal_files,
+            expected_file_paths
+        )
