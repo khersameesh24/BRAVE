@@ -26,9 +26,6 @@ class TestAggregateUtils(unittest.TestCase):
         )
         expected_file_paths: list = [
             Path("test_outdir"),
-            "test_outdir/brave_analysis_aggregated_report.html"
+            "test_outdir/brave_analysis_aggregated_report.html",
         ]
-        self.assertListEqual(
-            terminal_files,
-            expected_file_paths
-        )
+        self.assertListEqual(terminal_files, expected_file_paths)

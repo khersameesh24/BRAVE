@@ -20,8 +20,8 @@ benchmarks_dir: Path = Path(f'{output_dir}/{config["benchmarks_dir"]}')
 
 # generate flattened samples list
 flattended_samples: list = []
-flattended_samples.extend(config["sample_groups"]["control"])
-flattended_samples.extend(config["sample_groups"]["condition"])
+flattended_samples.extend(config["samples_control"])
+flattended_samples.extend(config["samples_condition"])
 
 # get available resources
 memory: float = PipelineUtils.get_available_memory()

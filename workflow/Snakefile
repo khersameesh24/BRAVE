@@ -11,7 +11,7 @@ schema_loc: Path = Path(snakefile_loc / "../config/config.schema.yaml").resolve(
 configfile: config_loc
 
 
-# validate config wit the schema
+# validate config with the config schema
 validate(config, schema_loc)
 # =================================================================================================
 # get the qc module

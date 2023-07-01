@@ -26,9 +26,6 @@ class TestCountsUtils(unittest.TestCase):
         expected_file_paths: list = [
             "test_outdir/counts.out",
             "test_outdir/final_counts.out",
-            "test_outdir/counts.out.summary"
+            "test_outdir/counts.out.summary",
         ]
-        self.assertListEqual(
-            terminal_files,
-            expected_file_paths
-        )
+        self.assertListEqual(terminal_files, expected_file_paths)

@@ -38,8 +38,10 @@ class TestQCUtils(unittest.TestCase):
         self.assertListEqual(
             terminal_files,
             expected_file_paths,
-            ("Check if the generate_terminal_files "
-             "function has the desired output for paired_end sample type.")
+            (
+                "Check if the generate_terminal_files "
+                "function has the desired output for paired_end sample type."
+            ),
         )
 
     def test_generate_terminal_files_se(self) -> None:
@@ -63,6 +65,8 @@ class TestQCUtils(unittest.TestCase):
         self.assertListEqual(
             terminal_files,
             expected_file_paths,
-            ("Check if the generate_terminal_files "
-             "function has the desired output for single_end sample type.")
+            (
+                "Check if the generate_terminal_files "
+                "function has the desired output for single_end sample type."
+            ),
         )

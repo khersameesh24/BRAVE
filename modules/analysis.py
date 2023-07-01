@@ -51,6 +51,18 @@ def parse_args(parser: _ArgumentGroup) -> _ArgumentGroup:
         "--unpaired",
         help="Default - `paired`. Type of sequencing library preparation.",
         action="store_true",
+        default=False,
+    )
+    optional_named.add_argument(
+        "--dry-run",
+        help="Dry run brave workflow.",
+        action="store_true",
+        default=False
+    )
+    optional_named.add_argument(
+        "--quiet",
+        help="Reduce verbosity for the brave workflow.",
+        action="store_true",
         default=False
     )
 
@@ -63,6 +75,8 @@ def execute_workflow(args: _ArgumentGroup) -> None:
     """
     # generate the additional config to be passed to snakemake
     add_config: dict = PipelineUtils.generate_additional_config(args)
+    dry_run = add_config["pipeline"]["dry_run"]
+    quiet_run = add_config["pipeline"]["quiet"]
 
     # get the available resources
     available_memory: float = PipelineUtils.get_available_memory()
@@ -78,8 +92,8 @@ def execute_workflow(args: _ArgumentGroup) -> None:
         resources={"mem_gb": available_memory},
         use_conda=True,
         config=add_config,
-        quiet=False,
-        dryrun=False,
+        quiet=quiet_run,
+        dryrun=dry_run,
     )
 
     return None

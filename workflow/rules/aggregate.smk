@@ -16,8 +16,8 @@ benchmarks_dir: Path = Path(f'{output_dir}/{config["benchmarks_dir"]}')
 
 # generate flattened samples list
 flattended_samples: list = []
-flattended_samples.extend(config["sample_groups"]["control"])
-flattended_samples.extend(config["sample_groups"]["condition"])
+flattended_samples.extend(config["samples_control"])
+flattended_samples.extend(config["samples_condition"])
 
 # get the config file loc
 snakefile_loc: Path = Path(workflow.snakefile).parent
@@ -84,7 +84,7 @@ rule run_multiqc:
                 sample=flattended_samples,
                 ext="insert_size_metrics.txt",
             )
-            if config["sample_type"] == "paired-end"
+            if config["sample_type"] == "paired_end"
         else [],
         markdup_out=expand(
             "{result_dir}/metrics/{metric_dir}/{sample}.{ext}",

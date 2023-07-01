@@ -16,8 +16,18 @@ benchmarks_dir: Path = Path(f'{output_dir}/{config["benchmarks_dir"]}')
 
 # generate flattened samples list
 flattended_samples: list = []
-flattended_samples.extend(config["sample_groups"]["control"])
-flattended_samples.extend(config["sample_groups"]["condition"])
+flattended_samples.extend(config["samples_control"])
+flattended_samples.extend(config["samples_condition"])
+
+# declare rule order for paired/single end library type
+if config["sample_type"] == "paired_end":
+
+    ruleorder: run_fastp_pe > run_fastp_se
+
+elif config["sample_type"] == "single_end":
+
+    ruleorder: run_fastp_se > run_fastp_pe
+
 
 # get available resources
 memory: float = PipelineUtils.get_available_memory()
@@ -48,11 +58,11 @@ rule run_fastp_pe:
     detects adapters
     """
     input:
-        fastq_R1=input_dir / "{sample}_R1.fastq.gz",
-        fastq_R2=input_dir / "{sample}_R2.fastq.gz",
+        fastq_R1=input_dir / "{sample}.1.fastq.gz",
+        fastq_R2=input_dir / "{sample}.2.fastq.gz",
     output:
-        trimmed_fastq_R1=output_dir / "{sample}_R1.trimmed.fastq.gz",
-        trimmed_fastq_R2=output_dir / "{sample}_R2.trimmed.fastq.gz",
+        trimmed_fastq_R1=output_dir / "{sample}.1.trimmed.fastq.gz",
+        trimmed_fastq_R2=output_dir / "{sample}.2.trimmed.fastq.gz",
         html=output_dir / "{sample}.html",
         json=output_dir / "{sample}.json",
     params:
@@ -97,8 +107,6 @@ rule run_fastp_se:
         trimmed_fastq=output_dir / "{sample}.trimmed.fastq.gz",
         html=output_dir / "{sample}.html",
         json=output_dir / "{sample}.json",
-    wildcard_constraints:
-        sample="\d+"
     params:
         length=50,
     priority: 1

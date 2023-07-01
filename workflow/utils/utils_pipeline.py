@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import multiprocessing as mp
 from argparse import _ArgumentGroup
@@ -53,52 +52,64 @@ class PipelineUtils:
         Generate a config dict to be passed to the snakemake executor
         Overwrite snakemake config from config.yaml
         """
-        config: dict = {
-            "pipeline": {
-                "sample_groups": {"control": [], "condition": []},
-                "sample_type": "",
-            },
-        }
+        pipeline: dict = {}
 
         # check if the input path exists
         if Path(args.input_dir).exists():
-            config["pipeline"]["pipeline_input"] = args.input_dir
+            pipeline.update({"pipeline_input": args.input_dir})
         else:
-            print("Check if the input directory path exists.")
-            exit(1)
+            raise FileNotFoundError(
+                "Check if the input directory path exists."
+            )
 
+        # check if the output path exists
         if args.output_dir and Path(args.output_dir):
-            config["pipeline"]["pipeline_output"] = args.output_dir
+            pipeline.update({"pipeline_output": args.output_dir})
 
+        # check if the sample type is paired/single end
         if args.unpaired:
-            config["pipeline"]["sample_type"] = "single_end"
+            pipeline.update({"sample_type": "single_end"})
         else:
-            config["pipeline"]["sample_type"] = "paired_end"
+            pipeline.update({"sample_type": "paired_end"})
 
         # get the sample info from samplesheet
         if Path(args.sample_sheet).exists():
             samples = SampleUtils.get_sample_info(
                 samplesheet=args.sample_sheet,
-                sample_type=config["pipeline"]["sample_type"]
+                sample_type=pipeline["sample_type"],
             )
             # check if the fastq files exists on the input directory
             SampleUtils.check_fastq_files(
                 in_dir=args.input_dir, samples=samples
             )
-            config["pipeline"]["sample_groups"]["condition"] = samples[
-                "condition"
-            ]
-            config["pipeline"]["sample_groups"]["control"] = samples["control"]
-            config["pipeline"]["sample_fastq"] = samples["sample_fastq"]
+            pipeline.update(
+                {
+                    "samples_condition": samples["condition"]
+                }
+            )
+            pipeline.update(
+                {
+                    "samples_control": samples["control"]
+                }
+            )
+            pipeline.update(
+                {"sample_fastq": samples["sample_fastq"]}
+            )
         else:
-            print("Check if the sample-sheet path exists.")
-            exit(1)
+            raise FileNotFoundError("Check if the sample-sheet path exists.")
 
         # set the workflow working directory
-        if args.work_dir:
-            if Path(args.work_dir).exists():
-                config["pipeline"]["work_dir"] = args.work_dir
+        if args.work_dir and Path(args.work_dir).exists():
+            pipeline.update({"work_dir": args.work_dir})
         else:
-            config["pipeline"]["work_dir"] = args.input_dir
+            pipeline.update({"work_dir": args.input_dir})
 
-        return config
+        # check for a dry run
+        if args.dry_run:
+            pipeline.update({"dry_run": True})
+
+        # check for verbosity
+        if args.quiet:
+            pipeline.update({"quiet": True})
+
+        return {"pipeline": pipeline}

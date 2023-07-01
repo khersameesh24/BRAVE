@@ -23,6 +23,6 @@ class TestDiffExpUtils(unittest.TestCase):
             out_dir=self.out_dir,
         )
 
-        assert ("test-out_dir/Differential_geneexp_analysis.csv"
-                in terminal_files
-                )
+        assert (
+            "test-out_dir/Differential_geneexp_analysis.csv" in terminal_files
+        )

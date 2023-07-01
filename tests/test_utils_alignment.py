@@ -30,9 +30,6 @@ class TestAlignmentUtils(unittest.TestCase):
             "test-out_dir/HBR_Rep1_SJ.out.tab",
             "test-out_dir/HBR_Rep1_Log.out",
             "test-out_dir/HBR_Rep1_Log.final.out",
-            "test-out_dir/HBR_Rep1_Log.progress.out"
+            "test-out_dir/HBR_Rep1_Log.progress.out",
         ]
-        self.assertListEqual(
-            terminal_files,
-            expected_file_paths
-        )
+        self.assertListEqual(terminal_files, expected_file_paths)

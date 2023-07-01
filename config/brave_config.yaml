@@ -1,18 +1,17 @@
 pipeline:
-  benchmarks_dir: /benchmarks
-  fastq_ext: .fastq.gz
-  log_dir: /logs
-  pipeline_input: "/input"
-  results: /results
-  sample_groups:
-    condition: []
-    control: []
+  samples_condition: []
+  samples_control: []
   sample_type: paired_end
   sample_fastq:
     condition: []
     control: []
   threads: 6
   work_dir: "/work_dir"
+  benchmarks_dir: /benchmarks
+  fastq_ext: .fastq.gz
+  log_dir: /logs
+  pipeline_input: "/input"
+  results: /results
 qc:
   output_dir: /trimmed
 counts:

@@ -38,9 +38,6 @@ class TestMetricsUtils(unittest.TestCase):
             "test_outdir/gcbias_metrics/HBR_Rep1_gcbias.metrics.summary.txt",
             "test_outdir/insert_size_metrics/HBR_Rep1.insert_size_metrics.txt",
             "test_outdir/insert_size_metrics/HBR_Rep1.insert_size_Histogram.pdf",
-            "test_outdir/rnaseq_metrics/HBR_Rep1.rna_metrics"
+            "test_outdir/rnaseq_metrics/HBR_Rep1.rna_metrics",
         ]
-        self.assertListEqual(
-            terminal_files,
-            expected_file_paths
-        )
+        self.assertListEqual(terminal_files, expected_file_paths)

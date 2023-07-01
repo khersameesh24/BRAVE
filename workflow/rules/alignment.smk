@@ -20,8 +20,8 @@ benchmarks_dir: Path = Path(f'{output_dir}/{config["benchmarks_dir"]}')
 
 # generate flattened samples list
 flattended_samples: list = []
-flattended_samples.extend(config["sample_groups"]["control"])
-flattended_samples.extend(config["sample_groups"]["condition"])
+flattended_samples.extend(config["samples_control"])
+flattended_samples.extend(config["samples_condition"])
 
 # get available resources
 memory: float = PipelineUtils.get_available_memory()
@@ -85,8 +85,8 @@ rule run_star_alignment_pe:
     get the counts matrix
     """
     input:
-        fastq_R1=input_dir / "{sample}_R1.trimmed.fastq.gz",
-        fastq_R2=input_dir / "{sample}_R2.trimmed.fastq.gz",
+        fastq_R1=input_dir / "{sample}.1.trimmed.fastq.gz",
+        fastq_R2=input_dir / "{sample}.2.trimmed.fastq.gz",
         gtf=work_dir / "chr22_genes.gtf",
         ref_genome=rules.run_star_generate_index.output.ref_genome,
     output:

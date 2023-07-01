@@ -12,7 +12,7 @@ class MetricsUtils:
         in_dir: Path,
         out_dir: Path,
         flattened_sample_list: list,
-        sample_type: str = "paired-end"
+        sample_type: str = "paired-end",
     ) -> list:
         """
         Generate terminal files as final output files for picard rules.
@@ -92,7 +92,7 @@ class MetricsUtils:
                     sample=flattened_sample_list,
                     ext=[
                         "insert_size_metrics.txt",
-                        "insert_size_Histogram.pdf"
+                        "insert_size_Histogram.pdf",
                     ],
                 )
             )

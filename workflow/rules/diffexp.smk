@@ -15,8 +15,8 @@ log_dir: Path = Path(f'{output_dir}/{config["log_dir"]}')
 benchmarks_dir: Path = Path(f'{output_dir}/{config["benchmarks_dir"]}')
 
 # get num samples
-num_control = len(config["sample_groups"]["control"])
-num_condition = len(config["sample_groups"]["condition"])
+num_control = len(config["samples_control"])
+num_condition = len(config["samples_condition"])
 
 # get available resources
 memory: float = PipelineUtils.get_available_memory()
