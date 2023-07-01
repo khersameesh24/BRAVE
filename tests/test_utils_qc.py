@@ -26,10 +26,10 @@ class TestQCUtils(unittest.TestCase):
             sample_type="paired_end",
         )
         expected_file_paths: list = [
-            "test_outdir/HBR_Rep1_R1.trimmed.fastq.gz",
-            "test_outdir/HBR_Rep1_R2.trimmed.fastq.gz",
-            "test_outdir/HBR_Rep2_R1.trimmed.fastq.gz",
-            "test_outdir/HBR_Rep2_R2.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep1.1.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep1.2.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep2.1.trimmed.fastq.gz",
+            "test_outdir/HBR_Rep2.2.trimmed.fastq.gz",
             "test_outdir/HBR_Rep1.html",
             "test_outdir/HBR_Rep1.json",
             "test_outdir/HBR_Rep2.html",

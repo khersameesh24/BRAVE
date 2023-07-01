@@ -1,6 +1,5 @@
 from pathlib import Path
 import pandas as pd
-from tabulate import tabulate
 
 
 class SampleUtils:
@@ -26,7 +25,6 @@ class SampleUtils:
             sample_df = pd.read_csv(
                 samplesheet, delimiter=",", dtype=str, index_col=False
             )
-            print(tabulate(sample_df, headers='keys', tablefmt='psql'))
             for _, row in sample_df.iterrows():
                 if sample_type == "paired_end":
                     if row["sampleType"] == "control":
