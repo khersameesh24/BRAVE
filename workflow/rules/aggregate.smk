@@ -45,6 +45,12 @@ onerror:
     )
     exit(1)
 
+onsuccess:
+    """
+    Executes only if the workflow succeeds
+    """
+    logger.error("Workflow executed successfully with no error")
+
 
 rule all:
     """

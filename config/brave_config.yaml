@@ -1,32 +1,63 @@
 pipeline:
-  samples_condition: []
+  # list of samples to be treated as control
   samples_control: []
+  # list of samples to be treated as condition
+  samples_condition: []
+  # type of library prep. default - paired_end (use --unpaired for single_end runs)
   sample_type: paired_end
-  condition_fastq: []
+  # list of control fastq files
   control_fastq: []
-  threads: 6
+  # list of condition fastq files
+  condition_fastq: []
+  # threads to run the pipeline with
+  threads: 8
+  # working dir for snakemake
   work_dir: "/work_dir"
+  # dir to store benchmarks
   benchmarks_dir: /benchmarks
-  fastq_ext: .fastq.gz
+  # dir to store logs
   log_dir: /logs
+  # extension of the input fastq files
+  fastq_ext: .fastq.gz
+  # input for the brave pipeline - with raw fastq files
   pipeline_input: "/input"
+  # output for the brave pipeline - with raw fastq files
   pipeline_output: "/output"
-  pipeline_log: "/pipeline_log"
+  # dir to store results of the brave analysis run
   results: /results
+
+# ================================================================================
 qc:
+  # directory to store output of the fastp run - trimmed fastq files
   output_dir: /trimmed
-counts:
-  input_dir: /mapped
-  output_dir: /counts
-metrics:
-  input_dir: /mapped
-  output_dir: /metrics
+
+# ================================================================================
 alignment:
+  # directory to store output of the star run - mapped/sample.sorted.bam
   input_dir: /trimmed
   output_dir: /mapped
   ref_genome: /reference_genome
-aggregate:
-  output_dir: /aggregate
+
+# ================================================================================
+counts:
+  # directory to store output of the featureCounts run - counts tsv
+  input_dir: /mapped
+  output_dir: /counts
+
+# ================================================================================
+metrics:
+  # directory to store output of the metrics run - metrics/metrics_dir
+  input_dir: /mapped
+  output_dir: /metrics
+
+# ================================================================================
 diffexp:
+  # directory to store output of the deseq2 run - diffexp/deseq_analysis.csv
   input_dir: /counts
   output_dir: /diffexp
+
+# ================================================================================
+aggregate:
+  # directory to store output of the multiqc run - aggregate/report.html
+  output_dir: /aggregate
+# ================================================================================

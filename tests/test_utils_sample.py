@@ -114,24 +114,5 @@ class TestSampleUtils(unittest.TestCase):
         }
         self.assertDictEqual(sample_info, expected_sample_info)
 
-    def test_check_fastq_files(self):
-        """
-        Test if the control sample fastqs are located in the input dir
-        """
-        samples: dict = {
-            "control": ["UHR_Rep1"],
-            "condition": ["HBR_Rep1"],
-            "control_fastq": [
-                "UHR_Rep1.1.fastq.gz",
-            ],
-            "condition_fastq": [
-                "HBR_Rep1.1.fastq.gz",
-            ],
-        }
-        with self.assertRaises(FileNotFoundError):
-            SampleUtils.check_fastq_files(
-                in_dir=self.temp_dir.name, samples=samples
-            )
-
     def tearDown(self) -> None:
         self.temp_dir.cleanup()

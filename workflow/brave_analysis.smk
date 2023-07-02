@@ -1,15 +1,19 @@
 from snakemake.utils import validate
 from snakemake.logging import logger
+from snakemake.utils import min_version
 from utils.utils_pipeline import PipelineUtils
 
 
-# get the config file loc
+# set snakemake version
+min_version("7.25.4")
+
+# get the config/schema file loc
 snakefile_loc: Path = Path(workflow.snakefile).parent
 config_loc: Path = Path(snakefile_loc / "../config/brave_config.yaml").resolve()
-logger.info(f"Config : {config_loc}")
+logger.info(f"\nConfig : {config_loc}")
 
 schema_loc: Path = Path(snakefile_loc / "../config/config.schema.yaml").resolve()
-logger.info(f"Schema : {schema_loc}")
+logger.info(f"Schema : {schema_loc}\n")
 
 
 configfile: config_loc
@@ -17,7 +21,7 @@ configfile: config_loc
 
 # validate config with the config schema
 validate(config, schema_loc)
-logger.info(f"Config validated with config schema")
+logger.info("Config validated.\n")
 # =================================================================================================
 # get the qc module
 qc_config = PipelineUtils.generate_step_config(config["pipeline"], config["qc"])
@@ -120,10 +124,10 @@ use rule * from diffexp as diffexp_*
 
 # =================================================================================================
 # orchestrate via rule all to generate output files from all modules
-logger.info("Running BRAVE workflow.")
+logger.info("\nExecuting brave analysis workflow...")
 
 
-rule brave:
+rule brave_analysis:
     input:
         rules.qc_all.input,
         rules.alignment_all.input,

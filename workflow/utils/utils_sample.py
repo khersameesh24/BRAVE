@@ -40,7 +40,7 @@ class SampleUtils:
                     "fastq2",
                 ]
                 if df_columns == column_names:
-                    logger.info(
+                    logger.debug(
                         f"Samplesheet validated for {sample_type} run."
                     )
                 elif len(df_columns) == 3 and df_columns[2] == "fastq":
@@ -57,7 +57,7 @@ class SampleUtils:
             elif sample_type == "single_end":
                 column_names: list = ["sampleID", "sampleType", "fastq"]
                 if df_columns == column_names:
-                    logger.info(
+                    logger.debug(
                         f"Samplesheet validated for {sample_type} run."
                     )
                 elif (
@@ -140,6 +140,7 @@ class SampleUtils:
         in_dir - input directory with fastq files
         samples - sample info from the samplesheet
         """
+        files_not_found: list = []
         if (
             "control_fastq" in samples.keys()
             and "condition_fastq" in samples.keys()
@@ -150,5 +151,9 @@ class SampleUtils:
             for file in sample_files:
                 filepath = f"{in_dir}/{file}"
                 if not Path(filepath).exists():
-                    logger.error(f"Fastq file {file} not found.")
-                    raise FileNotFoundError(f"Fastq file {file} not found.")
+                    files_not_found.append(file)
+
+            if files_not_found:
+                logger.error(f"\nThe following files were not found at {in_dir}")
+                logger.error("\n".join(files_not_found))
+                sys.exit(1)

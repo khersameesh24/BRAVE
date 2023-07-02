@@ -1,10 +1,9 @@
 from argparse import _ArgumentGroup
 from snakemake import snakemake
-from snakemake.logging import logger
 from workflow.utils.utils_pipeline import PipelineUtils
 
 
-DESCRIPTION = "Analyse your RNASeq data with the BRAVE"
+DESCRIPTION = "Analyse RNASeq data with BRAVE"
 
 
 def parse_args(parser: _ArgumentGroup) -> _ArgumentGroup:
@@ -91,9 +90,9 @@ def execute_workflow(args: _ArgumentGroup) -> None:
     available_memory: float = PipelineUtils.get_available_memory()
     max_cores: int = PipelineUtils.get_max_cores()
 
-    logger.info("Executing brave workflow...")
+    # execute brave analysis workflow
     snakemake(
-        snakefile="workflow/Snakefile",
+        snakefile="workflow/brave_analysis.smk",
         printshellcmds=True,
         printreason=True,
         nocolor=False,
