@@ -1,7 +1,9 @@
 # get stdlib modules
+from sys import exit
 from pathlib import Path
 
 # get local modules
+from snakemake.logging import logger
 from utils.utils_qc import QCUtils
 from utils.utils_pipeline import PipelineUtils
 
@@ -24,6 +26,7 @@ if config["sample_type"] == "paired_end":
 
     ruleorder: run_fastp_pe > run_fastp_se
 
+
 elif config["sample_type"] == "single_end":
 
     ruleorder: run_fastp_se > run_fastp_pe
@@ -39,6 +42,16 @@ terminal_files: list = QCUtils.generate_terminal_files(
     flattened_sample_list=flattended_samples,
     sample_type=config["sample_type"],
 )
+
+onerror:
+    """
+    Executes only if the workflow fails with an error
+    """
+    logger.error(
+        f"Workflow failed at the qc step. Check logs for more details"
+    )
+    exit(1)
+
 
 
 rule all:

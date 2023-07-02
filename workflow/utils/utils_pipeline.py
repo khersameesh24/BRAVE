@@ -74,29 +74,23 @@ class PipelineUtils:
 
         # get the sample info from samplesheet
         if Path(args.sample_sheet).exists():
-            samples = SampleUtils.get_sample_info(
+            samples_sheet = SampleUtils.validate_samplesheet(
                 samplesheet=args.sample_sheet,
                 sample_type=pipeline["sample_type"],
             )
+            # get sample info
+            samples = SampleUtils.get_samples(
+                sample_df=samples_sheet, sample_type=pipeline["sample_type"]
+            )
+            pipeline.update({"samples_condition": samples["condition"]})
+            pipeline.update({"samples_control": samples["control"]})
+            pipeline.update({"control_fastq": samples["control_fastq"]})
+            pipeline.update({"condition_fastq": samples["condition_fastq"]})
+
             # check if the fastq files exists on the input directory
             SampleUtils.check_fastq_files(
                 in_dir=args.input_dir, samples=samples
             )
-            pipeline.update(
-                {
-                    "samples_condition": samples["condition"]
-                }
-            )
-            pipeline.update(
-                {
-                    "samples_control": samples["control"]
-                }
-            )
-            pipeline.update(
-                {"sample_fastq": samples["sample_fastq"]}
-            )
-        else:
-            raise FileNotFoundError("Check if the sample-sheet path exists.")
 
         # set the workflow working directory
         if args.work_dir and Path(args.work_dir).exists():
@@ -107,9 +101,19 @@ class PipelineUtils:
         # check for a dry run
         if args.dry_run:
             pipeline.update({"dry_run": True})
+        else:
+            pipeline.update({"dry_run": False})
 
         # check for verbosity
         if args.quiet:
             pipeline.update({"quiet": True})
+        else:
+            pipeline.update({"quiet": False})
+
+        # check for dag
+        if args.dag:
+            pipeline.update({"dag": True})
+        else:
+            pipeline.update({"dag": False})
 
         return {"pipeline": pipeline}

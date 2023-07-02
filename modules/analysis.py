@@ -1,5 +1,6 @@
 from argparse import _ArgumentGroup
 from snakemake import snakemake
+from snakemake.logging import logger
 from workflow.utils.utils_pipeline import PipelineUtils
 
 
@@ -57,13 +58,19 @@ def parse_args(parser: _ArgumentGroup) -> _ArgumentGroup:
         "--dry-run",
         help="Dry run brave workflow.",
         action="store_true",
-        default=False
+        default=False,
     )
     optional_named.add_argument(
         "--quiet",
         help="Reduce verbosity for the brave workflow.",
         action="store_true",
-        default=False
+        default=False,
+    )
+    optional_named.add_argument(
+        "--dag",
+        help="Get d3 compatible json of the DAG",
+        action="store_true",
+        default=False,
     )
 
     return parser
@@ -75,13 +82,16 @@ def execute_workflow(args: _ArgumentGroup) -> None:
     """
     # generate the additional config to be passed to snakemake
     add_config: dict = PipelineUtils.generate_additional_config(args)
+
     dry_run = add_config["pipeline"]["dry_run"]
     quiet_run = add_config["pipeline"]["quiet"]
+    get_dag = add_config["pipeline"]["dag"]
 
     # get the available resources
     available_memory: float = PipelineUtils.get_available_memory()
     max_cores: int = PipelineUtils.get_max_cores()
 
+    logger.info("Executing brave workflow...")
     snakemake(
         snakefile="workflow/Snakefile",
         printshellcmds=True,
@@ -94,6 +104,7 @@ def execute_workflow(args: _ArgumentGroup) -> None:
         config=add_config,
         quiet=quiet_run,
         dryrun=dry_run,
+        printd3dag=get_dag,
     )
 
     return None

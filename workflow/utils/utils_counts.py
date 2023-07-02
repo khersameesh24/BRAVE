@@ -3,6 +3,7 @@ Utility class to generate terminal files for the counts snakefile
 """
 
 from pathlib import Path
+from snakemake.logging import logger
 
 
 class CountsUtils:
@@ -28,5 +29,12 @@ class CountsUtils:
             f"{out_dir}/final_counts.out",
             f"{out_dir}/counts.out.summary",
         ]
+
+        if terminal_files:
+            logger.info("Terminal files generated for counts.")
+        else:
+            logger.error(
+                f"{__name__}: Failed to generate terminal files for counts."
+            )
 
         return terminal_files

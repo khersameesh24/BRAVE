@@ -3,6 +3,7 @@ Utility class to generate terminal files for the fastqc snakefile
 """
 
 from pathlib import Path
+from snakemake.logging import logger
 
 
 class DiffExpUtils:
@@ -19,5 +20,12 @@ class DiffExpUtils:
         """
         terminal_files: list = []
         terminal_files = [f"{out_dir}/Differential_geneexp_analysis.csv"]
+
+        if terminal_files:
+            logger.info("Terminal files generated for diffexp.")
+        else:
+            logger.error(
+                f"{__name__}: Failed to generate terminal files for diffexp."
+            )
 
         return terminal_files

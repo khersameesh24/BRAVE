@@ -4,6 +4,7 @@ Utility class to generate terminal files for the aggregate snakefile
 
 
 from pathlib import Path
+from snakemake.logging import logger
 
 
 class AggregateUtils:
@@ -23,4 +24,10 @@ class AggregateUtils:
             f"{out_dir}/brave_analysis_aggregated_report.html",
         ]
 
+        if terminal_files:
+            logger.info("Terminal files generated for aggregate.")
+        else:
+            logger.error(
+                f"{__name__} Failed to generate terminal files for aggregate."
+            )
         return terminal_files

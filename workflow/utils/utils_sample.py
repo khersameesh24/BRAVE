@@ -1,4 +1,6 @@
+import sys
 from pathlib import Path
+from snakemake.logging import logger
 import pandas as pd
 
 
@@ -8,65 +10,145 @@ class SampleUtils:
     """
 
     @staticmethod
-    def get_sample_info(
+    def validate_samplesheet(
         samplesheet: Path, sample_type: str = "paired_end"
-    ) -> dict:
+    ) -> pd.DataFrame:
         """
         Get sample sheet data from the input samplesheet
         Args:
             samplesheet - path to the sample-sheet.csv
+            samples_type - paired/single end lib prep.
         """
-        samples: dict = {
-            "control": [],
-            "condition": [],
-            "sample_fastq": {"control": [], "condition": []},
-        }
         if Path(samplesheet).is_file() and Path(samplesheet).suffix == ".csv":
-            sample_df = pd.read_csv(
+            sample_df: pd.DataFrame = pd.read_csv(
                 samplesheet, delimiter=",", dtype=str, index_col=False
             )
-            for _, row in sample_df.iterrows():
-                if sample_type == "paired_end":
-                    if row["sampleType"] == "control":
-                        samples["control"].append(row["sampleID"])
-                        samples["sample_fastq"]["control"].extend(
-                            [row["fastq1"], row["fastq2"]]
-                        )
-                    elif row["sampleType"] == "condition":
-                        samples["condition"].append(row["sampleID"])
-                        samples["sample_fastq"]["condition"].extend(
-                            [row["fastq1"], row["fastq2"]]
-                        )
+            df_columns = list(sample_df.columns)
+            for col_name in df_columns:
+                idx = sample_df[sample_df[col_name] == ""].index
+                if idx.any():
+                    logger.error(
+                        "Empty value(s) in samplesheet. Check if all the columns in samplsheet have a value."
+                    )
+                    sys.exit(1)
 
-                elif sample_type == "single_end":
-                    if row["sampleType"] == "control":
-                        samples["control"].append(row["sampleID"])
-                        samples["sample_fastq"]["control"].append(row["fastq"])
-                    elif row["sampleType"] == "condition":
-                        samples["condition"].append(row["sampleID"])
-                        samples["sample_fastq"]["condition"].append(
-                            row["fastq"]
-                        )
+            if sample_type == "paired_end":
+                column_names: list = [
+                    "sampleID",
+                    "sampleType",
+                    "fastq1",
+                    "fastq2",
+                ]
+                if df_columns == column_names:
+                    logger.info(
+                        f"Samplesheet validated for {sample_type} run."
+                    )
+                elif len(df_columns) == 3 and df_columns[2] == "fastq":
+                    logger.error(
+                        "Check if the proper samplesheet is provided. Use `--unpaired` for single_end runs."
+                    )
+                    sys.exit(1)
+                else:
+                    logger.error(
+                        "Samplesheet could not be validated for {sample_type} run."
+                    )
+                    sys.exit(1)
+
+            elif sample_type == "single_end":
+                column_names: list = ["sampleID", "sampleType", "fastq"]
+                if df_columns == column_names:
+                    logger.info(
+                        f"Samplesheet validated for {sample_type} run."
+                    )
+                elif (
+                    len(df_columns) == 4
+                    and df_columns[2] == "fastq1"
+                    and df_columns[3] == "fastq2"
+                ):
+                    logger.info("Check if the proper samplesheet is provided.")
+                    sys.exit(1)
+
+        else:
+            logger.error("Check if the samplesheet exists.")
+            sys.exit(1)
+
+        return sample_df
+
+    @staticmethod
+    def get_samples(
+        sample_df: pd.DataFrame, sample_type: str = "paired_end"
+    ) -> dict:
+        """
+        Get samples from the samplesheet to be updated in
+        workflow config
+        Args:
+        sample_df - a dataframe containing sample info
+        sample_type - paired/single end lib prep.
+        """
+        samples: dict = {}
+        control_samples = sample_df.loc[
+            sample_df["sampleType"] == "control", "sampleID"
+        ].values.tolist()
+        samples.update({"control": control_samples})
+        condition_samples = sample_df.loc[
+            sample_df["sampleType"] == "condition", "sampleID"
+        ].values.tolist()
+        samples.update({"condition": condition_samples})
+
+        if sample_type == "paired_end":
+            control_fastq = (
+                sample_df.loc[
+                    sample_df["sampleType"] == "control", ["fastq1", "fastq2"]
+                ]
+                .values.flatten()
+                .tolist()
+            )
+            samples.update({"control_fastq": control_fastq})
+
+            condition_fastq = (
+                sample_df.loc[
+                    sample_df["sampleType"] == "condition",
+                    ["fastq1", "fastq2"],
+                ]
+                .values.flatten()
+                .tolist()
+            )
+            samples.update({"condition_fastq": condition_fastq})
+
+        elif sample_type == "single_end":
+            control_fastq = sample_df.loc[
+                sample_df["sampleType"] == "control", "fastq"
+            ].tolist()
+            samples.update({"control_fastq": control_fastq})
+
+            condition_fastq = sample_df.loc[
+                sample_df["sampleType"] == "condition", "fastq"
+            ].tolist()
+            samples.update({"condition_fastq": condition_fastq})
 
         return samples
 
     @staticmethod
-    def check_fastq_files(in_dir: Path, samples: dict) -> None:
+    def check_fastq_files(
+        in_dir: Path,
+        samples: dict,
+    ) -> None:
         """
         Check if the fastq files states in the samplesheet
         are present on the input directory path
+        Args:
+        in_dir - input directory with fastq files
+        samples - sample info from the samplesheet
         """
-        for ctrl_fastq, cond_fastq in zip(
-            samples["sample_fastq"]["control"],
-            samples["sample_fastq"]["condition"],
+        if (
+            "control_fastq" in samples.keys()
+            and "condition_fastq" in samples.keys()
         ):
-            ctrl_path = Path(f"{in_dir}/{ctrl_fastq}")
-            cond_path = Path(f"{in_dir}/{cond_fastq}")
-            if not Path(ctrl_path).exists():
-                raise FileNotFoundError(
-                    f"Fastq file {ctrl_fastq} in samplesheet not found at the {in_dir}"
-                )
-            if not Path(cond_path).exists():
-                raise FileNotFoundError(
-                    f"Fastq file {cond_fastq} in samplesheet not found at the {in_dir}"
-                )
+            sample_files: list = []
+            sample_files.extend(samples["control_fastq"])
+            sample_files.extend(samples["condition_fastq"])
+            for file in sample_files:
+                filepath = f"{in_dir}/{file}"
+                if not Path(filepath).exists():
+                    logger.error(f"Fastq file {file} not found.")
+                    raise FileNotFoundError(f"Fastq file {file} not found.")

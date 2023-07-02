@@ -1,4 +1,5 @@
 # get stdlib modules
+from sys import exit
 from pathlib import Path
 
 # get local modules
@@ -26,6 +27,15 @@ cores: int = PipelineUtils.get_max_cores()
 terminal_files: list = DiffExpUtils.generate_terminal_files(
     out_dir=output_dir,
 )
+
+onerror:
+    """
+    Executes only if the workflow fails with an error
+    """
+    logger.error(
+        f"Workflow failed at the diffexp step. Check logs for more details"
+    )
+    exit(1)
 
 
 rule all:

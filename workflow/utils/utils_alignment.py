@@ -5,6 +5,7 @@ Utility class to generate terminal files for the alignment snakefile
 
 from pathlib import Path
 from snakemake.io import expand
+from snakemake.logging import logger
 
 
 class AlignmentUtils:
@@ -38,5 +39,12 @@ class AlignmentUtils:
             sample=flattened_sample_list,
             ext=output_ext,
         )
+
+        if terminal_files:
+            logger.info("Terminal files generated for alignment.")
+        else:
+            logger.error(
+                f"{__name__}: Failed to generate terminal files for alignment."
+            )
 
         return terminal_files

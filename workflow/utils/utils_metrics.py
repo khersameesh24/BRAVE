@@ -1,5 +1,6 @@
 from pathlib import Path
 from snakemake.io import expand
+from snakemake.logging import logger
 
 
 class MetricsUtils:
@@ -105,5 +106,11 @@ class MetricsUtils:
                 ext="rna_metrics",
             )
         )
+        if terminal_files:
+            logger.info("Terminal files generated for metrics.")
+        else:
+            logger.error(
+                f"{__name__}: Failed to generate terminal files for metrics."
+            )
 
         return terminal_files

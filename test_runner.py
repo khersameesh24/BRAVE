@@ -4,7 +4,6 @@ Unit & Integration test suite
 
 import unittest
 
-
 # create a test loader
 brave_test_loader = unittest.TestLoader()
 # find all test modules

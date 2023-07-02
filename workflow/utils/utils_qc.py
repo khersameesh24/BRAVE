@@ -4,6 +4,7 @@ Utility class to generate terminal files for the qc snakefile
 
 from pathlib import Path
 from snakemake.io import expand
+from snakemake.logging import logger
 
 
 class QCUtils:
@@ -50,5 +51,11 @@ class QCUtils:
                 ext=["html", "json"],
             )
         )
+        if terminal_files:
+            logger.info("Terminal files generated for qc.")
+        else:
+            logger.error(
+                f"{__name__} Failed to generate terminal files for qc."
+            )
 
         return terminal_files

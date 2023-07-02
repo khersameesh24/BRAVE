@@ -1,10 +1,11 @@
 # get stdlib modules
+from sys import exit
 from pathlib import Path
 
 # get local modules
+from snakemake.logging import logger
 from utils.utils_alignment import AlignmentUtils
 from utils.utils_pipeline import PipelineUtils
-
 
 # get the snakemake working directory
 work_dir: Path = Path(config["work_dir"])
@@ -31,6 +32,15 @@ cores: int = PipelineUtils.get_max_cores()
 terminal_files: list = AlignmentUtils.generate_terminal_files(
     out_dir=output_dir, flattened_sample_list=flattended_samples
 )
+
+onerror:
+    """
+    Executes only if the workflow fails with an error
+    """
+    logger.error(
+        f"Workflow failed at the alignment step. Check logs for more details"
+    )
+    exit(1)
 
 
 rule all:

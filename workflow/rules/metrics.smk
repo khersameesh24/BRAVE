@@ -1,11 +1,12 @@
 # get stdlib modules
+from sys import exit
 from pathlib import Path
 
 
 # get local modules
+from snakemake.logging import logger
 from utils.utils_metrics import MetricsUtils
 from utils.utils_pipeline import PipelineUtils
-
 
 # get the snakemake working directory
 work_dir: Path = Path(config["work_dir"])
@@ -35,6 +36,15 @@ terminal_files: list = MetricsUtils.generate_terminal_files(
     flattened_sample_list=flattended_samples,
     sample_type=config["sample_type"],
 )
+
+onerror:
+    """
+    Executes only if the workflow fails with an error
+    """
+    logger.error(
+        f"Workflow failed at the metrics step. Check logs for more details"
+    )
+    exit(1)
 
 
 rule all:

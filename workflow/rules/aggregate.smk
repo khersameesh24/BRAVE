@@ -1,7 +1,9 @@
 # get stdlib modules
+from sys import exit
 from pathlib import Path
 
 # get local modules
+from snakemake.logging import logger
 from utils.utils_aggregate import AggregateUtils
 from utils.utils_pipeline import PipelineUtils
 
@@ -33,6 +35,15 @@ cores: int = PipelineUtils.get_max_cores()
 terminal_files: list = AggregateUtils.generate_terminal_files(
     out_dir=output_dir,
 )
+
+onerror:
+    """
+    Executes only if the qc workflow fails with an error
+    """
+    logger.info(
+        "Workflow failed at the aggregate step. Check logs for more details"
+    )
+    exit(1)
 
 
 rule all:
