@@ -12,13 +12,13 @@ pipeline:
   # threads to run the pipeline with
   threads: 8
   # working dir for snakemake
-  work_dir: "/work_dir"
+  work_dir: "work_dir"
   # dir to store benchmarks
   benchmarks_dir: /benchmarks
   # dir to store logs
   log_dir: /logs
   # extension of the input fastq files
-  fastq_ext: .fastq.gz
+  fastq_ext: fastq.gz
   # input for the brave pipeline - with raw fastq files
   pipeline_input: "/input"
   # output for the brave pipeline - with raw fastq files
@@ -61,3 +61,8 @@ aggregate:
   # directory to store output of the multiqc run - aggregate/report.html
   output_dir: /aggregate
 # ================================================================================
+stage:
+  output_dir: /raw_data
+  sra_filepath: "/home/sameesh/SRR_Acc_List.txt"
+  skip_technical: false
+  include_technical: false

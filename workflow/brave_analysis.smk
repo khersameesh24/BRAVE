@@ -1,6 +1,6 @@
 from snakemake.utils import validate
-from snakemake.logging import logger
 from snakemake.utils import min_version
+from snakemake.logging import logger
 from utils.utils_pipeline import PipelineUtils
 
 
@@ -21,7 +21,7 @@ configfile: config_loc
 
 # validate config with the config schema
 validate(config, schema_loc)
-logger.info("Config validated.\n")
+logger.info("\nConfig validated")
 # =================================================================================================
 # get the qc module
 qc_config = PipelineUtils.generate_step_config(config["pipeline"], config["qc"])
@@ -125,6 +125,22 @@ use rule * from diffexp as diffexp_*
 # =================================================================================================
 # orchestrate via rule all to generate output files from all modules
 logger.info("\nExecuting brave analysis workflow...")
+onsuccess:
+    """
+    Executes only if the workflow succeeds
+    """
+    logger.error(
+        "\nBrave analysis workflow executed successfully with no error."
+    )
+    # mail -s "Brave analysis complete." khersameesh24@gmail.com < snakemake.log
+
+onerror:
+    """
+    Executes only if the brave workflow fails with an error
+    """
+    logger.error(
+        "\nBrave analysis workflow failed. Check logs for more details."
+    )
 
 
 rule brave_analysis:

@@ -1,4 +1,3 @@
-name: env_metrics
 channels:
   - bioconda
   - conda-forge

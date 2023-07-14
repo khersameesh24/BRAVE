@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+THREADS="6"
+MEMORY="1024"
+SAMPLE_TYPE="paired_end"
+SRR_ACCESSION_FILE=""
+PREFETCH_OUTPUT_DIR=""
+TECHNICAL=""
+SPLIT_FILES=""
+
+# print script usage
+usage() {
+    echo -e """\nDownload data from NCBI with sra- \`prefetch\` & \`fasterq-dump\`\n
+Usage:
+$(basename ${0}) [-i <PATH> -o <PATH> -l <STR>]\n
+Required Args:
+    -i <PATH> absolute path to SRR accession file containing list of SRR ids
+    -o <PATH> absolute path to download sra files
+    -l <STR>  sample type (type of library prep.)
+\nOptional Args:
+    -t <INT>  threads to run the fasterq-dump with. Default - 6
+    -m <INT>  memory to run fasterq-dump with. Default - 100MB
+    --skip-technical           skip technical reads
+    --include-technical        include technical reads
+    """
+}
+
+# get command line args
+while getopts ":i:o:l:t:m:h" option; do
+    case "${option}" in
+    i)
+        i=${OPTARG}
+        ;;
+    o)
+        o=${OPTARG}
+        ;;
+    l)
+        l=${OPTARG}
+        ;;
+    t)
+        t=${OPTARG}
+        THREADS=${t}
+        ;;
+    m)
+        m=${OPTARG}
+        MEMORY=${m}
+        ;;
+    h)
+        h=${OPTARG}
+        usage
+        exit 0
+        ;;
+    *)
+        usage
+        ;;
+    esac
+done
+
+# exit if no args provided
+if [ ${#} -eq 0 ]; then
+    usage
+    exit 1
+fi
+
+# positional arguments
+POS_ARG=${@:$OPTIND+1:1}
+if [ "${POS_ARG}" == "--skip-technical" ] || [ "${POS_ARG}" == "--include-technical" ]; then
+    TECHNICAL=${POS_ARG}
+else
+    echo -e "\nInvalid value for technical reads: ${o}"
+    echo -e "\nPossible values: --skip-technical or --include-technical"
+    exit 1
+fi
+
+# get named options
+shift $((OPTIND - 1))
+
+# check for required args
+if [ -z "${i}" ] || [ -z "${o}" ] || [ -z "${l}" ]; then
+    echo -e "\nMissing required arguments."
+    usage
+    exit 1
+fi
+
+# check for valid input
+if [ -f "${i}" ]; then
+    SRR_ACCESSION_FILE=${i}
+else
+    echo -e "\nCheck if the SRR accession file exists: ${i}"
+    exit 1
+fi
+
+# check for valid output
+if [ -d "${o}" ]; then
+    PREFETCH_OUTPUT_DIR=${o}
+fi
+
+# check for valid sample type
+if [ "${l}" == "paired_end" ] || [ "${l}" == "single_end" ]; then
+    SAMPLE_TYPE=${l}
+else
+    echo -e "\nInvalid sample type: ${o}"
+    echo -e "Possible values: paired_end or single_end"
+    exit 1
+fi
+
+# set file splitting
+if [ ${SAMPLE_TYPE} == "paired_end" ]; then
+    SPLIT_FILES="--split-files"
+else
+    SPLIT_FILES=""
+fi
+
+# get the list of SRR accession ids from the file
+declare -a SRR_ACCESSION_LIST=()
+
+if [ -f "${SRR_ACCESSION_FILE}" ]; then
+    while read -r SRR_ID; do
+        SRR_ID=$(sed 's/ //g' <<<${SRR_ID})
+        SRR_ACCESSION_LIST+=(${SRR_ID})
+    done <"${SRR_ACCESSION_FILE}"
+fi
+
+# show run info
+echo -e """\n
+SRR Accession filepath : ${SRR_ACCESSION_FILE}
+Output directory path  : ${PREFETCH_OUTPUT_DIR}
+Sample type            : ${SAMPLE_TYPE}
+Threads                : ${THREADS}
+Memory                 : ${MEMORY}
+Technical Reads        : ${TECHNICAL}
+SRR ids                : ${SRR_ACCESSION_LIST[@]}
+"""
+
+# run sra prefetch
+echo -e "\nRunning SRAToolKit prefetch..."
+for SRR_ID in "${SRR_ACCESSION_LIST[@]}"; do
+    prefetch \
+        ${SRR_ID} \
+        --output-directory ${PREFETCH_OUTPUT_DIR}/ \
+        --progress \
+        --verbose
+done
+
+# run sra fasterq-dump
+echo -e "\nRunning SRAToolKit fasterq-dump..."
+for SRR_ID in "${SRR_ACCESSION_LIST[@]}"; do
+    echo -e "\nSRR id: ${SRR_ID}"
+    fasterq-dump \
+        ${PREFETCH_OUTPUT_DIR}/${SRR_ID}/${SRR_ID}.sra \
+        --outfile ${SRR_ID}.fastq \
+        --outdir ${PREFETCH_OUTPUT_DIR}/${SRR_ID} \
+        ${SPLIT_FILES} \
+        ${TECHNICAL} \
+        --temp ${PREFETCH_OUTPUT_DIR}/${SRR_ID} \
+        --progress \
+        --threads "${THREADS}" \
+        --mem "${MEMORY}" \
+        --details \
+        --verbose
+done
+
+# compress fastq files
+echo -e "\nCompressing Fastq files..."
+find "${PREFETCH_OUTPUT_DIR}" -type f -name "*.fastq" | parallel gzip {}
