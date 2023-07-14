@@ -75,8 +75,8 @@ rule run_sratools:
         sra_outdir=directory(f"{output_dir}"),
     params:
         sample_type=config["sample_type"],
-        skip_technical="--skip-technical" if config["skip_technical"] else "",
-        include_technical="--include-technical" if config["include_technical"] else "",
+        skip_technical="-a" if config["skip_technical"] else "",
+        include_technical="-b" if config["include_technical"] else "",
         memory=memory,
     priority: 1
     conda:

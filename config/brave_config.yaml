@@ -64,5 +64,5 @@ aggregate:
 stage:
   output_dir: /raw_data
   sra_filepath: "/home/sameesh/SRR_Acc_List.txt"
-  skip_technical: true
+  skip_technical: false
   include_technical: false
