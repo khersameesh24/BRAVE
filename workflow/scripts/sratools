@@ -149,7 +149,7 @@ SRR ids                 : ${SRR_ACCESSION_LIST[@]}
 # run sra prefetch
 echo -e "\nRunning SRAToolKit prefetch..."
 for SRR_ID in "${SRR_ACCESSION_LIST[@]}"; do
-    echo prefetch \
+    prefetch \
         ${SRR_ID} \
         --output-directory ${PREFETCH_OUTPUT_DIR}/ \
         --progress \
@@ -160,7 +160,7 @@ done
 echo -e "\nRunning SRAToolKit fasterq-dump..."
 for SRR_ID in "${SRR_ACCESSION_LIST[@]}"; do
     echo -e "\nSRR id: ${SRR_ID}"
-    echo fasterq-dump \
+    fasterq-dump \
         ${PREFETCH_OUTPUT_DIR}/${SRR_ID}/${SRR_ID}.sra \
         --outfile ${SRR_ID}.fastq \
         --outdir ${PREFETCH_OUTPUT_DIR}/${SRR_ID} \
